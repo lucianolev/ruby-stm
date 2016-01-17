@@ -3,7 +3,7 @@ class ASTAtomicRewriter < Parser::AST::Processor
     receiver_node, method_name, *arg_nodes = *node
     receiver_node = process(receiver_node) if receiver_node
     node.updated(nil, [
-        receiver_node, atomic_name_of(method_name), *process_all(arg_nodes)
+        receiver_node, self.class.atomic_name_of(method_name), *process_all(arg_nodes)
     ])
   end
 
@@ -23,12 +23,5 @@ class ASTAtomicRewriter < Parser::AST::Processor
         Parser::AST::Node.new(:self), :atomic_instance_variable_get,
         Parser::AST::Node.new(:sym, [var_name.to_sym])
     ])
-  end
-
-  private
-
-  def atomic_name_of(method_name)
-    method_name_atomic = '__atomic__' + method_name.to_s
-    method_name_atomic.to_sym
   end
 end

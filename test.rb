@@ -1,13 +1,14 @@
 require_relative 'ruby_core_ext/proc'
 
+# test 1
+
 class Hello
   def say
-    @internal_list = "hello"
-    local_var = @internal_list
+    @internal_var = 'hello'
+    local_var = @internal_var
     puts local_var
   end
 end
-
 
 say_hello = Proc.new do
   hello = Hello.new
@@ -16,20 +17,22 @@ end
 
 puts say_hello.atomic
 
-class MyList
+# test 2
+
+class MyObject
   def initialize
-    @internal_list = Array.new
+    @internal_var = 1
   end
 
-  def add(elem)
-    @internal_list.push(elem)
+  def set_var(elem)
+    @internal_var = elem
   end
 end
 
 list_oops = Proc.new do
-  my_list = MyList.new
-  my_list.add(1)
-  my_list.inspect
+  my_list = MyObject.new
+  my_list.set_var(2)
+  my_list
 end
 
-#puts list_oops.atomic
+puts list_oops.atomic.inspect

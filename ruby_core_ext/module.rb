@@ -1,4 +1,6 @@
 require_relative 'unbound_method'
+require_relative '../parsing/source_code_reader'
+require_relative '../parsing/source_code_atomic'
 
 class Module
   def define_atomic_method(original_method_name)
@@ -6,10 +8,9 @@ class Module
     if original_method.is_native?
       original_method_name # cannot transform native methods
     else
-      atomic_source_code = Proc.new do
-        eval(original_method.atomic_source_code)
-      end
-      define_method(atomic_name_of(original_method_name), &atomic_source_code)
+      original_method_def_src = SourceCodeReader.new.get_src_of_first_expression_in(*original_method.source_location)
+      atomic_variant_source_code = SourceCodeAtomic.new.method_def_to_atomic(original_method_def_src)
+      class_eval(atomic_variant_source_code)
       atomic_name_of(original_method_name)
     end
   end
@@ -26,10 +27,12 @@ class Module
     end
   end
 
-  private
-
   def atomic_name_of(method_name)
-    method_name_atomic = '__atomic__' + method_name.to_s
+    method_name_atomic = atomic_method_prefix + method_name.to_s
     method_name_atomic.to_sym
+  end
+
+  def atomic_method_prefix
+    '__atomic__'
   end
 end
