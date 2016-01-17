@@ -24,7 +24,8 @@ class SourceCodeAtomic
     buffer = Parser::Source::Buffer.new('(method buffer)')
     buffer.source = method_def_src
     rewriter = Parser::Source::Rewriter.new(buffer)
-    rewriter.insert_before(method_def_node.location.name, self.class.atomic_method_prefix)
+    method_name = method_def_node.children[0]
+    rewriter.replace(method_def_node.location.name, self.class.atomic_name_of(method_name).to_s)
     rewriter.process
   end
 

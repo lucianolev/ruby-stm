@@ -21,7 +21,7 @@ class Module
 
   def atomic_method_nonatomic_name(atomic_method_name)
     if method_is_atomic?(atomic_method_name)
-      atomic_method_name.to_s.sub('__atomic__', '').to_sym
+      atomic_method_name.to_s.sub(atomic_method_prefix, '').to_sym
     else
       atomic_method_name
     end
@@ -31,6 +31,8 @@ class Module
     method_name_atomic = atomic_method_prefix + method_name.to_s
     method_name_atomic.to_sym
   end
+
+  private
 
   def atomic_method_prefix
     '__atomic__'
