@@ -11,11 +11,11 @@ class ObjectChange
     @original.copy_internal_state(@working)
   end
 
-  def has_conflict
-    not @original.has_same_internal_state(@previous)
+  def has_conflict?
+    not @original.has_same_internal_state?(@previous)
   end
 
-  def has_changed
-    not @working.has_same_internal_state(@previous)
+  def has_changed?
+    not @working.has_same_internal_state?(@previous)
   end
 end

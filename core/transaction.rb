@@ -14,12 +14,14 @@ class Transaction
   end
 
   def commit
-    @object_changes.each_value do |each|
-      if each.has_conflict
+    @object_changes.each_value do |change|
+      if change.has_conflict?
         raise
       end
-      if each.has_changed
-        each.apply
+    end
+    @object_changes.each_value do |change|
+      if change.has_changed?
+        change.apply
       end
     end
     nil

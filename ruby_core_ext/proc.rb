@@ -8,6 +8,8 @@ class Proc
     Transaction.new.do(to_atomic)
   end
 
+  private
+
   def to_atomic
     proc_def_src = SourceCodeReader.new.get_src_of_first_expression_in(*source_location)
     atomic_block_src = SourceCodeAtomic.new.atomic_source_of_proc(proc_def_src)
