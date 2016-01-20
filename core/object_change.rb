@@ -1,3 +1,5 @@
+require_relative '../ruby_core_ext/object'
+
 class ObjectChange
   attr_reader :working
 
