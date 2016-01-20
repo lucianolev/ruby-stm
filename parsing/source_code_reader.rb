@@ -5,6 +5,8 @@ class SourceCodeReader
     extract_first_expression(lines_from_linenum)
   end
 
+  private
+
   # based on https://github.com/banister/method_source/blob/master/lib/method_source/code_helpers.rb#L92
   def extract_first_expression(lines)
     code = ''
@@ -14,8 +16,6 @@ class SourceCodeReader
     end
     raise SyntaxError, 'unexpected $end'
   end
-
-  private
 
   # based on https://github.com/banister/method_source/blob/master/lib/method_source/code_helpers.rb#L66
   def complete_expression?(str)
@@ -28,29 +28,29 @@ class SourceCodeReader
   rescue IncompleteExpression
     false
   end
+end
 
-  # based on https://github.com/banister/method_source/blob/master/lib/method_source/code_helpers.rb#L124
-  module IncompleteExpression
-    GENERIC_REGEXPS = [
-        /unexpected (\$end|end-of-file|end-of-input|END_OF_FILE)/, # mri, jruby, ruby-2.0, ironruby
-        /embedded document meets end of file/, # =begin
-        /unterminated (quoted string|string|regexp) meets end of file/, # "quoted string" is ironruby
-        /can't find string ".*" anywhere before EOF/, # rbx and jruby
-        /missing 'end' for/, /expecting kWHEN/ # rbx
-    ]
+# based on https://github.com/banister/method_source/blob/master/lib/method_source/code_helpers.rb#L124
+class IncompleteExpression
+  GENERIC_REGEXPS = [
+      /unexpected (\$end|end-of-file|end-of-input|END_OF_FILE)/, # mri, jruby, ruby-2.0, ironruby
+      /embedded document meets end of file/, # =begin
+      /unterminated (quoted string|string|regexp) meets end of file/, # "quoted string" is ironruby
+      /can't find string ".*" anywhere before EOF/, # rbx and jruby
+      /missing 'end' for/, /expecting kWHEN/ # rbx
+  ]
 
-    RBX_ONLY_REGEXPS = [
-        /expecting '[})\]]'(?:$|:)/, /expecting keyword_end/
-    ]
+  # RBX_ONLY_REGEXPS = [
+  #     /expecting '[})\]]'(?:$|:)/, /expecting keyword_end/
+  # ]
 
-    def self.===(ex)
-      return false unless SyntaxError === ex
-      case ex.message
-        when *GENERIC_REGEXPS
-          true
-        else
-          false
-      end
+  def self.===(ex)
+    return false unless SyntaxError === ex
+    case ex.message
+      when *GENERIC_REGEXPS
+        true
+      else
+        false
     end
   end
 end
