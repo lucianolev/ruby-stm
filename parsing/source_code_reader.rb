@@ -40,17 +40,23 @@ class IncompleteExpression
       /missing 'end' for/, /expecting kWHEN/ # rbx
   ]
 
-  # RBX_ONLY_REGEXPS = [
-  #     /expecting '[})\]]'(?:$|:)/, /expecting keyword_end/
-  # ]
+  RBX_ONLY_REGEXPS = [
+      /expecting '[})\]]'(?:$|:)/, /expecting keyword_end/
+  ]
 
   def self.===(ex)
     return false unless SyntaxError === ex
     case ex.message
       when *GENERIC_REGEXPS
         true
+      when *RBX_ONLY_REGEXPS
+        rbx?
       else
         false
     end
+  end
+
+  def self.rbx?
+    RbConfig::CONFIG['ruby_install_name'] == 'rbx'
   end
 end
