@@ -1,8 +1,9 @@
+require_relative '../ruby_core_ext/kernel'
 require_relative 'object_change'
 
 class Transaction
   def do(atomic_block)
-    $current_transaction = self
+    Kernel.current_transaction = self
     self.begin
     result = atomic_block.call
     commit

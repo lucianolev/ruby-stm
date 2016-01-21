@@ -1,3 +1,4 @@
+require_relative 'kernel'
 require_relative 'module'
 
 class Object
@@ -22,7 +23,10 @@ class Object
   end
 
   def working_copy
-    transaction = $current_transaction
+    transaction = Kernel.current_transaction
+    if transaction.nil?
+      raise 'No current transaction!'
+    end
     transaction.change_for(self).working
   end
 
@@ -54,6 +58,6 @@ class Object
   end
 
   def is_a_morphable_primitive?
-    self.is_a?(Array || Hash || String)
+    self.is_a?(Array) or self.is_a?(String) or self.is_a?(Hash)
   end
 end
