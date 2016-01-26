@@ -1,4 +1,3 @@
-require_relative 'kernel'
 require_relative 'module'
 
 class Object
@@ -23,7 +22,7 @@ class Object
   end
 
   def working_copy
-    transaction = Kernel.current_transaction
+    transaction = Thread.current[:current_transaction]
     if transaction.nil?
       raise 'No current transaction!'
     end
