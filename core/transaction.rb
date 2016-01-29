@@ -2,21 +2,29 @@ require_relative 'object_change'
 
 class Transaction
   def do(atomic_block)
+    do_if_conflict(atomic_block, Proc.new { raise 'CommitConflict' })
+  end
+
+  def do_if_conflict(atomic_block, on_conflict_block)
     Thread.current[:current_transaction] = self
     self.begin
     result = atomic_block.call
-    commit
+    commit(on_conflict_block)
     result
+  end
+
+  def retry(atomic_block)
+    do_if_conflict(atomic_block, Proc.new { self.retry(atomic_block) })
   end
 
   def begin
     @object_changes = {}
   end
 
-  def commit
+  def commit(on_conflict_block)
     @object_changes.each_value do |change|
       if change.has_conflict?
-        raise
+        return on_conflict_block.call
       end
     end
     @object_changes.each_value do |change|

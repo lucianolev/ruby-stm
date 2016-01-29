@@ -1,9 +1,16 @@
 class ASTAtomicRewriter < Parser::AST::Processor
   def on_send(node) # e.g.: obj.a_message
     receiver_node, method_name, *arg_nodes = *node
-    receiver_node = process(receiver_node) if receiver_node
+
+    # When accessing a variable defined in outer scope, the doesn't recognize it so it interprets it as a message
+    # sent to nil. In that case we should not generate an atomic variant
+    if receiver_node
+      receiver_node = process(receiver_node)
+      method_name = self.class.atomic_name_of(method_name)
+    end
+
     node.updated(nil, [
-        receiver_node, self.class.atomic_name_of(method_name), *process_all(arg_nodes)
+        receiver_node, method_name, *process_all(arg_nodes)
     ])
   end
 
