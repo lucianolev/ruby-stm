@@ -1,3 +1,4 @@
+require_relative '../ruby_core_ext/thread'
 require_relative 'module'
 
 class Object
@@ -22,7 +23,7 @@ class Object
   end
 
   def working_copy
-    transaction = Thread.current[:current_transaction]
+    transaction = Thread.current_transaction
     if transaction.nil?
       raise 'No current transaction!'
     end

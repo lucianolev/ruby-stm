@@ -1,3 +1,4 @@
+require_relative '../ruby_core_ext/thread'
 require_relative 'object_change'
 
 class Transaction
@@ -6,7 +7,7 @@ class Transaction
   end
 
   def do_if_conflict(atomic_block, on_conflict_block)
-    Thread.current[:current_transaction] = self
+    Thread.set_current_transaction(self)
     self.begin
     result = atomic_block.call
     commit(on_conflict_block)
