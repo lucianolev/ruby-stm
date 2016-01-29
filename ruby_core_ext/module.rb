@@ -6,7 +6,7 @@ class Module
   def define_atomic_method(original_method_name)
     original_method = instance_method(original_method_name)
     if original_method.is_native?
-      puts "DEBUG: Native method #{original_method.owner}:#{original_method.name} called."
+      #puts "DEBUG: Native method #{original_method.owner}:#{original_method.name} called."
       original_method_name # cannot transform native methods
     else
       original_method_def_src = SourceCodeReader.new.get_src_of_first_expression_in(*original_method.source_location)
@@ -77,7 +77,8 @@ class Module
     {
         :[]= => :set_index,
         :[] => :at,
-        :+ => :plus
+        :+ => :plus,
+        :- => :minus
     }
   end
 end
