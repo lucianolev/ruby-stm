@@ -3,7 +3,7 @@ require_relative '../parsing/source_code_reader'
 require_relative '../parsing/source_code_atomic'
 
 class Module
-  def define_atomic_method(original_method_name)
+  def define_atomic_instance_method(original_method_name)
     original_method = instance_method(original_method_name)
     if original_method.is_native?
       #puts "DEBUG: Native method #{original_method.owner}:#{original_method.name} called."
@@ -11,6 +11,7 @@ class Module
     else
       original_method_def_src = SourceCodeReader.new.get_src_of_first_expression_in(*original_method.source_location)
       atomic_variant_source_code = SourceCodeAtomic.new.method_def_to_atomic(original_method_def_src)
+      #puts 'DEBUG: New atomic method defined: ', atomic_variant_source_code
       class_eval(atomic_variant_source_code)
       atomic_name_of(original_method_name)
     end

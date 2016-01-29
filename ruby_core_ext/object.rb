@@ -5,7 +5,13 @@ class Object
   def method_missing(method_name, *args)
     if self.class.method_is_atomic?(method_name)
       original_method_name = self.class.atomic_method_nonatomic_name(method_name)
-      atomic_method_name = self.class.define_atomic_method(original_method_name)
+      if self.is_a?(Class)
+        object_class = self.singleton_class
+      else
+        object_class = self.class
+      end
+      atomic_method_name = object_class.define_atomic_instance_method(original_method_name)
+      #puts "DEBUG: Calling atomic method '#{object_class}:#{atomic_method_name}'."
       __send__(atomic_method_name, *args)
     else
       super

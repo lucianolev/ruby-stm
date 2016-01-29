@@ -42,13 +42,13 @@ describe Module do
 
     it 'should define an atomic version of a non-native method correctly' do
       my_object = MyObject.new
-      atomic_method_name = my_object.class.define_atomic_method(:change_inst_var)
+      atomic_method_name = my_object.class.define_atomic_instance_method(:change_inst_var)
       expect(my_object.class.instance_methods).to include(atomic_method_name)
     end
 
     it 'should define an atomic version of a native method correctly' do
       my_object = MyObject.new
-      atomic_method_name = my_object.class.define_atomic_method(:to_s)
+      atomic_method_name = my_object.class.define_atomic_instance_method(:to_s)
       expect(my_object.class.instance_methods).to include(atomic_method_name)
     end
   end
