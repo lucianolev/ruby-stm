@@ -1,6 +1,7 @@
 require 'parser/current'
 require 'unparser'
 require_relative 'ast_atomic_rewriter'
+require_relative '../ruby_core_ext/module'
 
 class SourceCodeAtomic
   def atomic_source_of_proc(proc_definition_src)
@@ -24,7 +25,7 @@ class SourceCodeAtomic
     buffer = Parser::Source::Buffer.new('(method buffer)')
     buffer.source = method_def_src
     rewriter = Parser::Source::Rewriter.new(buffer)
-    method_name = method_def_node.children[0]
+    method_name = method_def_node.children.find { |child| child.is_a?(Symbol) }
     rewriter.replace(method_def_node.location.name, self.class.atomic_name_of(method_name).to_s)
     rewriter.process
   end

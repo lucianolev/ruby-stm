@@ -61,4 +61,18 @@ end
 CODE
     expect(@source_code_atomic.method_def_to_atomic(method_def_src)).to eq(expected_code.gsub(/\n\z/, ''))
   end
+
+  it 'should generate the atomic version of a CLASS method definition correctly' do
+    method_def_src = <<-CODE
+def self.a_method
+  a_var = 1
+end
+CODE
+    expected_code = <<-CODE
+def self.__atomic__a_method
+  a_var = 1
+end
+CODE
+    expect(@source_code_atomic.method_def_to_atomic(method_def_src)).to eq(expected_code.gsub(/\n\z/, ''))
+  end
 end
