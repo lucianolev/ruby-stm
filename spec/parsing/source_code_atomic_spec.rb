@@ -25,6 +25,18 @@ CODE
     expect(@source_code_atomic.atomic_source_of_proc(proc_def_src)).to eq(expected_code.gsub(/\n\z/, ''))
   end
 
+  it 'should correctly transform a Proc that is not assigned to a variable' do
+    proc_def_src = <<-CODE
+Proc.new do
+  local_var = 5
+end
+CODE
+    expected_code = <<-CODE
+local_var = 5
+CODE
+    expect(@source_code_atomic.atomic_source_of_proc(proc_def_src)).to eq(expected_code.gsub(/\n\z/, ''))
+  end
+
   xit 'the atomic transformation of a Proc should be able to distinguish a message sent without a receiver from an access
 to an outer scope variable' do
     proc_def_src = <<-CODE
