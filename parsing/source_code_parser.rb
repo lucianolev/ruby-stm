@@ -1,11 +1,28 @@
-class SourceCodeReader
+require 'parser/current'
+require 'unparser'
+
+class SourceCodeParser
+
+  def get_proc_source_code(a_proc)
+    source_location = a_proc.source_location
+    proc_definition = get_src_of_first_expression_in(*source_location)
+    proc_assign_node = Parser::CurrentRuby.parse(proc_definition)
+    body_node = get_body_node_from_proc_def(proc_assign_node)
+    Unparser.unparse(body_node)
+  end
+
+  def get_method_definition(a_method)
+    source_location = a_method.source_location
+    get_src_of_first_expression_in(*source_location)
+  end
+
+  private
+
   def get_src_of_first_expression_in(file, linenum)
     lines = IO.readlines(file)
     lines_from_linenum = lines[linenum-1..-1]
     extract_first_expression(lines_from_linenum)
   end
-
-  private
 
   # based on https://github.com/banister/method_source/blob/master/lib/method_source/code_helpers.rb#L92
   def extract_first_expression(lines)
@@ -28,6 +45,29 @@ class SourceCodeReader
   rescue IncompleteExpression
     false
   end
+
+  def get_body_node_from_proc_def(proc_def_node)
+    if proc_def_node.type == :block
+      block_node = proc_def_node
+    else
+      block_node = proc_def_node.children.find { |child| child.is_a?(Parser::AST::Node) && child.type == :block }
+    end
+    # block_node children array:
+    # [0] (send
+    #       (const nil :Proc) :new)
+    # [1] (args)
+    # [2] THE_BODY_NODE (can be any type if single-line, or ':begin' if multi-line)
+    block_node.children[2]
+  end
+
+  # def get_body_node_from_method_def(method_def_node)
+  #   args_node_index = method_def_node.children.find_index { |child| child.is_a?(Parser::AST::Node) && child.type == :args }
+  #   # method_def_node children array:
+  #   # [0..n-1] ?
+  #   # [n] (args)
+  #   # [n+1] THE_BODY_NODE (can be any type if single-line, or ':begin' if multi-line)
+  #   method_def_node.children[args_node_index+1]
+  # end
 end
 
 # based on https://github.com/banister/method_source/blob/master/lib/method_source/code_helpers.rb#L124

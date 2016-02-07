@@ -41,7 +41,7 @@ describe 'Simulated Transaction' do
   end
 
   # TODO: does it make sense to test this?
-  it 'an atomic withdraw yields a correct balance, altough the object was altered by another thread' do
+  it 'an atomic withdraw yields a correct balance, although the object was altered by another thread' do
     a_bank_account = BankAccount.new(100)
 
     thread_a = run_new_thread_until_stopped do
@@ -85,7 +85,7 @@ describe 'Simulated Transaction' do
   end
 
   # TODO: does it make sense to test this?
-  it 'an atomic withdraw yields a correct balance, altough the object was altered by another fiber' do
+  it 'an atomic withdraw yields a correct balance, although the object was altered by another fiber' do
     a_bank_account = BankAccount.new(100)
 
     fiber_a = Fiber.new do

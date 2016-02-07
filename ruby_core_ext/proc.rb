@@ -1,6 +1,6 @@
 require_relative 'object'
-require_relative '../parsing/source_code_reader'
-require_relative '../parsing/source_code_atomic'
+require_relative '../parsing/source_code_parser'
+require_relative '../parsing/source_code_atomic_transformer'
 require_relative '../core/transaction'
 
 class Proc
@@ -16,11 +16,14 @@ class Proc
     Transaction.new.retry(to_atomic)
   end
 
+  def source_code
+    SourceCodeParser.new.get_proc_source_code(self)
+  end
+
   private
 
   def to_atomic
-    proc_def_src = SourceCodeReader.new.get_src_of_first_expression_in(*source_location)
-    atomic_block_src = SourceCodeAtomic.new.atomic_source_of_proc(proc_def_src)
+    atomic_block_src = SourceCodeAtomicTransformer.new.transform_source_code(self.source_code)
     self.class.new do
       binding.eval(atomic_block_src)
     end

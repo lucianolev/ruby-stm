@@ -3,14 +3,14 @@ require_relative 'object_change'
 
 class Transaction
   def do(atomic_block)
-    do_if_conflict(atomic_block, Proc.new { raise 'CommitConflict' })
+    do_if_conflict(atomic_block, Proc.new { self.signal_conflict })
   end
 
   def do_if_conflict(atomic_block, on_conflict_block)
     Thread.set_current_transaction(self)
     self.begin
     result = atomic_block.call
-    commit(on_conflict_block)
+    commit_if_conflict(on_conflict_block)
     result
   end
 
@@ -22,7 +22,11 @@ class Transaction
     @object_changes = {}
   end
 
-  def commit(on_conflict_block)
+  def commit
+    commit_if_conflict(Proc.new { self.signal_conflict })
+  end
+
+  def commit_if_conflict(on_conflict_block)
     @object_changes.each_value do |change|
       if change.has_conflict?
         return on_conflict_block.call
@@ -34,6 +38,20 @@ class Transaction
       end
     end
     nil
+  end
+
+  def checkpoint
+    self.commit
+    self.begin
+  end
+
+  def abort
+    Thread.set_current_transaction(nil)
+    @object_changes = nil
+  end
+
+  def signal_conflict
+    raise 'CommitConflict'
   end
 
   def change_for(an_object)

@@ -1,19 +1,19 @@
 require_relative 'unbound_method'
-require_relative '../parsing/source_code_reader'
-require_relative '../parsing/source_code_atomic'
+require_relative '../parsing/source_code_atomic_transformer'
 
 class Module
-  def define_atomic_instance_method(original_method_name)
+
+  # In the Smalltalk implementation, this is done in conjunction with
+  # ACCompiler>>atomicMethod:missing: and CompiledMethod. In Ruby, it makes sense
+  def define_atomic_method(original_method_name)
     original_method = instance_method(original_method_name)
     if original_method.is_native?
       #puts "DEBUG: Native method #{original_method.owner}:#{original_method.name} called."
-      original_method_name # cannot transform native methods
+      define_method(atomic_name_of(original_method_name), original_method)
     else
-      original_method_def_src = SourceCodeReader.new.get_src_of_first_expression_in(*original_method.source_location)
-      atomic_variant_source_code = SourceCodeAtomic.new.method_def_to_atomic(original_method_def_src)
       #puts 'DEBUG: New atomic method defined: ', atomic_variant_source_code
-      class_eval(atomic_variant_source_code)
-      atomic_name_of(original_method_name)
+      atomic_method_definition = SourceCodeAtomicTransformer.new.transform_method_definition(original_method.definition)
+      class_eval(atomic_method_definition)
     end
   end
 
