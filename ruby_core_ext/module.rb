@@ -3,8 +3,9 @@ require_relative '../parsing/source_code_atomic_transformer'
 
 class Module
 
-  # In the Smalltalk implementation, this is done in conjunction with
-  # ACCompiler>>atomicMethod:missing: and CompiledMethod. In Ruby, it makes sense
+  # In the Smalltalk implementation, this is done in conjunction with ACCompiler>>atomicMethod:missing: and
+  # CompiledMethod. In Ruby, it makes more sense to do it in Module, as it has already a method colled 'define_method'
+  # to define new methods.
   def define_atomic_method(original_method_name)
     original_method = instance_method(original_method_name)
     if original_method.is_native?
