@@ -6,6 +6,8 @@ class Object
     if self.class.method_is_atomic?(method_name)
       original_method_name = self.class.atomic_method_nonatomic_name(method_name)
 
+      # Class methods should be defined in singleton's
+      # class of the object, instead of in Class class.
       if self.is_a?(Class)
         object_class = self.singleton_class
       else

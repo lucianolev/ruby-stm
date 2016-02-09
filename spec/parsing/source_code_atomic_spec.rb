@@ -76,7 +76,7 @@ def self.a_method
 end
 CODE
     expected_code = <<-CODE
-def self.__atomic__a_method
+def __atomic__a_method
   a_var = 1
 end
 CODE

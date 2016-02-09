@@ -22,9 +22,23 @@ class SourceCodeAtomicTransformer
     buffer = Parser::Source::Buffer.new('(method buffer)')
     buffer.source = method_def_src
     rewriter = Parser::Source::Rewriter.new(buffer)
+    remove_method_receiver_if_present(method_def_node, rewriter)
+    replace_method_name_with_atomix_prefix(method_def_node, rewriter)
+    rewriter.process
+  end
+
+  def replace_method_name_with_atomix_prefix(method_def_node, rewriter)
     method_name = method_def_node.children.find { |child| child.is_a?(Symbol) }
     rewriter.replace(method_def_node.location.name, self.class.atomic_name_of(method_name).to_s)
-    rewriter.process
+  end
+
+  def remove_method_receiver_if_present(method_def_node, rewriter)
+    dot_separator = method_def_node.location.operator
+    unless dot_separator.nil?
+      node_before_dot = method_def_node.children.first
+      rewriter.remove(node_before_dot.location.expression)
+      rewriter.remove(dot_separator)
+    end
   end
 
 end
