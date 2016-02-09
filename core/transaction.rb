@@ -8,8 +8,17 @@ class Transaction
 
   def do_if_conflict(atomic_block, on_conflict_block)
     Thread.set_current_transaction(self)
-    self.begin
-    result = atomic_block.call
+    begin_transaction
+    begin
+      begin
+        result = atomic_block.call
+      ensure
+        Thread.set_current_transaction(nil)
+      end
+    rescue
+      abort
+      raise
+    end
     commit_if_conflict(on_conflict_block)
     result
   end
@@ -18,7 +27,7 @@ class Transaction
     do_if_conflict(atomic_block, Proc.new { self.retry(atomic_block) })
   end
 
-  def begin
+  def begin_transaction
     @object_changes = {}
   end
 
@@ -41,12 +50,11 @@ class Transaction
   end
 
   def checkpoint
-    self.commit
-    self.begin
+    commit
+    begin_transaction
   end
 
   def abort
-    Thread.set_current_transaction(nil)
     @object_changes = nil
   end
 
