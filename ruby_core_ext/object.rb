@@ -19,16 +19,6 @@ class Object
     end
   end
 
-  def atomic_instance_variable_set(var_name, value)
-    #puts "Var #{var_name.inspect} set to value #{value.inspect}"
-    working_copy.instance_variable_set(var_name, value)
-  end
-
-  def atomic_instance_variable_get(var_name)
-    #puts "Var #{var_name.inspect} get"
-    working_copy.instance_variable_get(var_name)
-  end
-
   def working_copy
     transaction = Thread.current_transaction
     if transaction.nil?

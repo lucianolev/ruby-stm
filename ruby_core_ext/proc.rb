@@ -1,3 +1,5 @@
+require_relative 'atomic_overrides/object'
+require_relative 'atomic_overrides/array'
 require_relative 'object'
 require_relative '../parsing/source_code_parser'
 require_relative '../parsing/source_code_atomic_transformer'

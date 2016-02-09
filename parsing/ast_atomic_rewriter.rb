@@ -18,7 +18,7 @@ class ASTAtomicRewriter < Parser::AST::Processor
     var_name, value_node = *node
 
     node.updated(:send, [
-        Parser::AST::Node.new(:self), :atomic_instance_variable_set,
+        Parser::AST::Node.new(:self), self.class.atomic_name_of(:instance_variable_set),
         Parser::AST::Node.new(:sym, [var_name.to_sym]), process(value_node)
     ])
   end
@@ -27,7 +27,7 @@ class ASTAtomicRewriter < Parser::AST::Processor
     var_name = node.children.first
 
     node.updated(:send, [
-        Parser::AST::Node.new(:self), :atomic_instance_variable_get,
+        Parser::AST::Node.new(:self), self.class.atomic_name_of(:instance_variable_get),
         Parser::AST::Node.new(:sym, [var_name.to_sym])
     ])
   end

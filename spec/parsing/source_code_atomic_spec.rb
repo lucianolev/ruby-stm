@@ -17,8 +17,8 @@ CODE
     expected_code = <<-CODE
 myobj = MyObj.__atomic__new
 local_var = 5
-self.atomic_instance_variable_set(:@instance_var, 8)
-another_local = self.atomic_instance_variable_get(:@instance_var)
+self.__atomic__instance_variable_set(:@instance_var, 8)
+another_local = self.__atomic__instance_variable_get(:@instance_var)
 myobj.__atomic__method_call
 CODE
     expect(@source_code_atomic.transform_source_code(proc_def_src)).to eq(expected_code.gsub(/\n\z/, ''))
@@ -61,8 +61,8 @@ CODE
 def __atomic__a_method
   myobj = MyObj.__atomic__new
   local_var = 5
-  self.atomic_instance_variable_set(:@instance_var, 8)
-  another_local = self.atomic_instance_variable_get(:@instance_var)
+  self.__atomic__instance_variable_set(:@instance_var, 8)
+  another_local = self.__atomic__instance_variable_get(:@instance_var)
   myobj.__atomic__method_call
 end
 CODE
