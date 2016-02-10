@@ -29,6 +29,8 @@ describe Module do
       class MyObject
         attr_accessor :internal_var
 
+        @class_var = 1
+
         def initialize
           @internal_var = 1
         end
@@ -37,6 +39,11 @@ describe Module do
           my_local = 8
           @internal_var = my_local
         end
+
+        def self.change_class_var
+          my_local = 5
+          @class_var = my_local
+        end
       end
     end
 
@@ -44,6 +51,12 @@ describe Module do
       my_object = MyObject.new
       atomic_method_name = my_object.class.define_atomic_method(:change_inst_var)
       expect(my_object.class.instance_methods).to include(atomic_method_name)
+    end
+
+    it 'should define an atomic version of a non-native class method correctly' do
+      my_object = MyObject.new
+      atomic_method_name = my_object.class.singleton_class.define_atomic_method(:change_class_var)
+      expect(my_object.class.methods).to include(atomic_method_name)
     end
 
     it 'should define an atomic version of a native method correctly' do

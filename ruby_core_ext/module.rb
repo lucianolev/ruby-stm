@@ -80,7 +80,14 @@ class Module
         :[]= => :set_index,
         :[] => :at,
         :+ => :plus,
-        :- => :minus
+        :- => :minus,
+        :* => :asterisk,
+        :/ => :slash,
+        :> => :greater_than,
+        :< => :less_than,
+        :>= => :greater_or_eq_than,
+        :<= => :less_or_eq_than,
+        :== => :double_equal_sign
     }
   end
 end

@@ -1,4 +1,5 @@
 require 'rspec'
+require_relative '../../../ruby_core_ext/proc'
 
 describe 'Transactions and Exceptions' do
   before do

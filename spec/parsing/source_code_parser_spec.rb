@@ -2,9 +2,6 @@ require 'rspec'
 require_relative '../../parsing/source_code_parser'
 
 describe SourceCodeParser do
-  before do
-    @file = File.absolute_path('spec/parsing/test_data/source.rb.txt')
-  end
 
   it 'should get the source of multi-lined Proc definition' do
     say_hello = Proc.new do

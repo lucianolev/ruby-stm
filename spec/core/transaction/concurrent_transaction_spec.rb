@@ -1,7 +1,7 @@
 require 'rspec'
-require_relative '../ruby_core_ext/proc'
+require_relative '../../../ruby_core_ext/proc'
 
-describe 'Simulated Transaction' do
+describe 'Concurrent transactions' do
   def run_new_thread_until_stopped(&block)
     thread = Thread.new(&block)
     sleep(0.1) while thread.status != 'sleep'
