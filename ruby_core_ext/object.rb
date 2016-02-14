@@ -2,7 +2,7 @@ require_relative '../ruby_core_ext/thread'
 require_relative 'module'
 
 class Object
-  def method_missing(method_name, *args)
+  def method_missing(method_name, *args, &block)
     if self.class.method_is_atomic?(method_name)
       original_method_name = self.class.atomic_method_nonatomic_name(method_name)
 
@@ -20,7 +20,7 @@ class Object
       object_class.define_atomic_method(original_method_name)
 
       if respond_to?(method_name, true)
-        __send__(method_name, *args) # resend the message
+        __send__(method_name, *args, &block) # resend the message
       else
         raise "Fail to define atomic method '#{object_class}##{method_name}'!"
       end

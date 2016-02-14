@@ -177,6 +177,18 @@ describe 'Transaction basics' do
     expect(proc.atomic).to eq(10)
   end
 
+  it 'should handle a method call with a block correctly' do
+    proc = Proc.new {
+      i = 0
+      10.times do
+        i = i + 1
+      end
+      i
+    }
+
+    expect(proc.atomic).to eq(10)
+  end
+
   xit 'should send a message defined by alias_method correctly' do
     proc = Proc.new { @my_object.alias_message }
     expect(proc.atomic).to eq('a response')
