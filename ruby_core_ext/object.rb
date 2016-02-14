@@ -6,16 +6,24 @@ class Object
     if self.class.method_is_atomic?(method_name)
       original_method_name = self.class.atomic_method_nonatomic_name(method_name)
 
-      # Class methods should be defined in singleton's
+      unless respond_to?(original_method_name, true)
+        raise "'#{self}' does not respond to original method '#{original_method_name}'!"
+      end
+
+      # Class and Module methods should be defined in singleton's
       # class of the object, instead of in Class class.
-      if self.is_a?(Class)
+      if self.is_a?(Module)
         object_class = self.singleton_class
       else
         object_class = self.class
       end
       object_class.define_atomic_method(original_method_name)
 
-      __send__(method_name, *args)  # resend the message
+      if respond_to?(method_name, true)
+        __send__(method_name, *args) # resend the message
+      else
+        raise "Fail to define atomic method '#{object_class}##{method_name}'!"
+      end
     else
       super
     end
