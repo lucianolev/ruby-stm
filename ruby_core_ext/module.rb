@@ -87,7 +87,9 @@ class Module
         :< => :less_than,
         :>= => :greater_or_eq_than,
         :<= => :less_or_eq_than,
-        :== => :double_equal_sign
+        :== => :double_equal_sign,
+        :<< => :shift_left,
+        :>> => :shift_right
     }
   end
 end
