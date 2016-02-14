@@ -77,7 +77,7 @@ class IncompleteExpression
       /embedded document meets end of file/, # =begin
       /unterminated (quoted string|string|regexp) meets end of file/, # "quoted string" is ironruby
       /can't find string ".*" anywhere before EOF/, # rbx and jruby
-      /missing 'end' for/, /expecting kWHEN/ # rbx
+      /missing 'end' for/, /expecting keyword_when/ # rbx
   ]
 
   RBX_ONLY_REGEXPS = [

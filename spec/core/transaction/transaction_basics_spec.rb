@@ -14,6 +14,8 @@ describe 'Transaction basics' do
         'a response'
       end
 
+      alias_method :alias_message, :a_message
+
       def instance_var
         @instance_var
       end
@@ -103,8 +105,8 @@ describe 'Transaction basics' do
   end
 
   it 'should send a message with argument correctly' do
-    proc = Proc.new { 'abc'.concat('def') }
-    expect(proc.atomic).to eq('abcdef')
+    proc = Proc.new { 'abc'.include?('c') }
+    expect(proc.atomic).to eq(true)
   end
 
   it 'should send a message to a custom class object correctly' do
@@ -173,6 +175,11 @@ describe 'Transaction basics' do
     }
 
     expect(proc.atomic).to eq(10)
+  end
+
+  xit 'should send a message defined by alias_method correctly' do
+    proc = Proc.new { @my_object.alias_message }
+    expect(proc.atomic).to eq('a response')
   end
 
 end

@@ -81,6 +81,7 @@ class Module
         :[] => :at,
         :+ => :plus,
         :- => :minus,
+        :-@ => :minus_unary,
         :* => :asterisk,
         :/ => :slash,
         :> => :greater_than,
