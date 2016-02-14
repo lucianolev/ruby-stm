@@ -14,7 +14,12 @@ class Module
     else
       #puts 'DEBUG: New atomic method defined: ', atomic_variant_source_code
       atomic_method_definition = SourceCodeAtomicTransformer.new.transform_method_definition(original_method.definition)
-      class_eval(atomic_method_definition)
+      new_atomic_method_name = class_eval(atomic_method_definition)
+
+      if atomic_name_of(original_method_name) != new_atomic_method_name
+        alias_method(atomic_name_of(original_method_name), new_atomic_method_name)
+      end
+      atomic_name_of(original_method_name)
     end
   end
 

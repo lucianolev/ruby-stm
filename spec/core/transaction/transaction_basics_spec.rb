@@ -189,7 +189,7 @@ describe 'Transaction basics' do
     expect(proc.atomic).to eq(10)
   end
 
-  xit 'should send a message defined by alias_method correctly' do
+  it 'should send a message defined by alias_method correctly' do
     proc = Proc.new { @my_object.alias_message }
     expect(proc.atomic).to eq('a response')
   end

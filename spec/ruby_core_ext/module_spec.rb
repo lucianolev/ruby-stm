@@ -40,6 +40,8 @@ describe Module do
           @internal_var = my_local
         end
 
+        alias_method :alias_change_inst_var, :change_inst_var
+
         def self.change_class_var
           my_local = 5
           @class_var = my_local
@@ -62,6 +64,12 @@ describe Module do
     it 'should define an atomic version of a native method correctly' do
       my_object = MyObject.new
       atomic_method_name = my_object.class.define_atomic_method(:to_s)
+      expect(my_object.class.instance_methods).to include(atomic_method_name)
+    end
+
+    it 'should define an atomic version of an aliased method correctly' do
+      my_object = MyObject.new
+      atomic_method_name = my_object.class.define_atomic_method(:alias_change_inst_var)
       expect(my_object.class.instance_methods).to include(atomic_method_name)
     end
   end
