@@ -25,7 +25,7 @@ class Proc
   private
 
   def to_atomic
-    atomic_block_src = SourceCodeAtomicTransformer.new.transform_source_code(self.source_code)
+    atomic_block_src = SourceCodeAtomicTransformer.new.transform_source_code_with_binding(self.source_code, binding)
     self.class.new do
       binding.eval(atomic_block_src, *source_location)
     end

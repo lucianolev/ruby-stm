@@ -104,6 +104,11 @@ describe 'Transaction basics' do
     expect(proc.atomic).to eq('cba')
   end
 
+  it 'should send a message without arguments and without an explicit receiver correctly' do
+    proc = Proc.new { nil? }
+    expect(proc.atomic).to eq(false)
+  end
+
   it 'should send a message with argument correctly' do
     proc = Proc.new { 'abc'.include?('c') }
     expect(proc.atomic).to eq(true)

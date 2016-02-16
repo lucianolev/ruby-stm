@@ -5,8 +5,12 @@ require_relative '../ruby_core_ext/module'
 
 class SourceCodeAtomicTransformer
   def transform_source_code(source_code)
+    transform_source_code_with_binding(source_code, nil)
+  end
+
+  def transform_source_code_with_binding(source_code, source_binding)
     source_root_node = Parser::CurrentRuby.parse(source_code)
-    transformed_root_node = ASTAtomicRewriter.new.process(source_root_node)
+    transformed_root_node = ASTAtomicRewriter.new(source_binding).process(source_root_node)
     Unparser.unparse(transformed_root_node)
   end
 

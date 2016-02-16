@@ -1,11 +1,18 @@
 class ASTAtomicRewriter < Parser::AST::Processor
+  def initialize(a_binding=nil)
+    @source_binding = a_binding
+  end
+
   def on_send(node) # e.g.: obj.a_message
     receiver_node, method_name, *arg_nodes = *node
 
-    # When accessing a variable defined in outer scope, the doesn't recognize it so it interprets it as a message
-    # sent to nil. In that case we should not generate an atomic variant
-    if receiver_node
-      receiver_node = process(receiver_node)
+    receiver_node = process(receiver_node) if receiver_node
+
+    # When accessing a local variable defined in outer scope, the parser cannot distinguish it from a message sent
+    # wihout arguments and without an explicit receiver. In that case we can desambiguate the situation by looking
+    # if the supposed 'method_name' is not indeed a local variable. So, we do the atomic name transformation unless
+    # it's a local variable.
+    unless is_a_local_variable(method_name)
       if RUBY_ENGINE == 'rbx'
         # Some Rubinius' module methods aren't real methods (they are not defined anywhere) but a mark that Rubinius
         # uses for the VM to replace that code with a C++ native call. As they're not real methoda, we should not
@@ -46,6 +53,14 @@ class ASTAtomicRewriter < Parser::AST::Processor
   def is_a_rbx_primitive_mark(receiver_node, method_name)
     primitives = [:primitive, :invoke_primitive, :check_frozen]
     receiver_node.children[1] == :Rubinius && primitives.include?(method_name)
+  end
+
+  def is_a_local_variable(method_name)
+    begin
+      !@source_binding.nil? and @source_binding.local_variable_defined?(method_name)
+    rescue NameError # some method name are not valid local variable names so local_variable_defined? will raise a NameError
+      false
+    end
   end
 
 end

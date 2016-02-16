@@ -34,19 +34,6 @@ CODE
     expect(@source_code_atomic.transform_source_code(proc_def_src)).to eq(expected_code.gsub(/\n\z/, ''))
   end
 
-  xit 'the atomic transformation of a Proc should be able to distinguish a message sent without a receiver from an access
-to an outer scope variable' do
-    proc_def_src = <<-CODE
-a_method_call_without_explicit_receiver
-local = an_outer_scope_variable
-    CODE
-    expected_code = <<-CODE
-__atomic__a_method_call_without_explicit_receiver
-local = an_outer_scope_variable
-CODE
-    expect(@source_code_atomic.transform_source_code(proc_def_src)).to eq(expected_code.gsub(/\n\z/, ''))
-  end
-
   it 'should generate the atomic version of a method definition correctly' do
     method_def_src = <<-CODE
 def a_method
