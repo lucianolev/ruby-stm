@@ -94,6 +94,7 @@ class Module
         :>= => :greater_or_eq_than,
         :<= => :less_or_eq_than,
         :== => :double_equal_sign,
+        :!= => :not_equal,
         :<< => :shift_left,
         :>> => :shift_right
     }
