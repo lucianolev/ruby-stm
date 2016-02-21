@@ -11,10 +11,12 @@ class Module
     if original_method.is_native?
       #puts "DEBUG: Native method #{original_method.owner}:#{original_method.name} called."
       define_method(atomic_name_of(original_method_name), original_method)
+    elsif original_method.is_a_kernel_alpha_method?
+      define_method(atomic_name_of(original_method_name), original_method)
     else
       #puts 'DEBUG: New atomic method defined: ', atomic_variant_source_code
       atomic_method_definition = SourceCodeAtomicTransformer.new.transform_method_definition(original_method.definition)
-      new_atomic_method_name = class_eval(atomic_method_definition)
+      new_atomic_method_name = class_eval_with_kernel_code_support(atomic_method_definition)
 
       if atomic_name_of(original_method_name) != new_atomic_method_name
         alias_method(atomic_name_of(original_method_name), new_atomic_method_name)
@@ -44,6 +46,32 @@ class Module
       operator_atomic(method_name)
     else
       method_name_atomic(method_name)
+    end
+  end
+
+  def class_eval_with_kernel_code_support(string, filename="(eval)", line=1)
+    if RUBY_ENGINE == 'rbx'
+      require_relative 'rbx/kernel_eval_compiler'
+
+      # Code below from Module#module_eval found in kernel/common/eval.rb:175 (rbx-3.14),
+      # with an alternative custom compiler (KernelEvalCompiler)
+
+      string = StringValue(string)
+      filename = StringValue(filename)
+
+      # The constantscope of a module_eval CM is the receiver of module_eval
+      cs = Rubinius::ConstantScope.new self, Rubinius::ConstantScope.of_sender
+
+      binding = Binding.setup(Rubinius::VariableScope.of_sender,
+                              Rubinius::CompiledCode.of_sender,
+                              cs)
+
+      c = KernelEvalCompiler
+      be = c.construct_block string, binding, filename, line
+
+      be.call_under self, cs, true, self
+    else
+      class_eval(string, filename, line)
     end
   end
 

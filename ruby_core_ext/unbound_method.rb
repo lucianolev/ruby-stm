@@ -6,6 +6,15 @@ class UnboundMethod
     source_location.nil?
   end
 
+  def is_a_kernel_alpha_method?
+    if RUBY_ENGINE == 'rbx'
+      unless source_location.nil?
+        return source_location[0] == File.join(RbConfig::CONFIG['prefix'], 'kernel/alpha.rb')
+      end
+    end
+    false
+  end
+
   def definition
     if is_native?
       raise 'Cannot get source code of a native method.'

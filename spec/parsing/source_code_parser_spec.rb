@@ -52,14 +52,14 @@ hello.say
     end
 
     expected_expression_src = <<-CODE
-      def say
-        @internal_var = 'hello'
-        local_var = @internal_var
-        puts local_var
-      end
-    CODE
+def say
+  @internal_var = "hello"
+  local_var = @internal_var
+  puts(local_var)
+end
+CODE
 
-    expect(SourceCodeParser.new.get_method_definition(SomeClass.instance_method(:say))).to eq(expected_expression_src)
+    expect(SourceCodeParser.new.get_method_definition(SomeClass.instance_method(:say))).to eq(expected_expression_src.gsub(/\n\z/, ''))
   end
 
 end

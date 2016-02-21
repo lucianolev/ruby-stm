@@ -1,3 +1,5 @@
+require_relative '../ruby_core_ext/binding'
+
 class ASTAtomicRewriter < Parser::AST::Processor
   def initialize(a_binding=nil)
     @source_binding = a_binding
@@ -9,15 +11,16 @@ class ASTAtomicRewriter < Parser::AST::Processor
     receiver_node = process(receiver_node) if receiver_node
 
     # When accessing a local variable defined in outer scope, the parser cannot distinguish it from a message sent
-    # wihout arguments and without an explicit receiver. In that case we can desambiguate the situation by looking
+    # wihout arguments and an explicit receiver. In that case we can desambiguate the situation by looking
     # if the supposed 'method_name' is not indeed a local variable. So, we do the atomic name transformation unless
     # it's a local variable.
     unless is_a_local_variable(method_name)
       if RUBY_ENGINE == 'rbx'
-        # Some Rubinius' module methods aren't real methods (they are not defined anywhere) but a mark that Rubinius
-        # uses for the VM to replace that code with a C++ native call. As they're not real methoda, we should not
-        # transform them. See http://stackoverflow.com/questions/20777211/what-does-rubinius-primitive-do
-        unless is_a_rbx_primitive_mark(receiver_node, method_name)
+        # Some Rubinius' send nodes are NOT defined as methods. Instead they are transformed using defined AST
+        # transformations found in the kernel which emit a special bytecode instead of a normal message send. We should
+        # not transform this nodes to atomic because if they are transformed, the transformations will not be applied
+        # due to unmatching method name so the interpreter will raise an unhandlable method_missing.
+        unless is_a_rbx_undefined_method_node(receiver_node, method_name)
           method_name = self.class.atomic_name_of(method_name)
         end
       else
@@ -50,9 +53,14 @@ class ASTAtomicRewriter < Parser::AST::Processor
 
   private
 
-  def is_a_rbx_primitive_mark(receiver_node, method_name)
-    primitives = [:primitive, :invoke_primitive, :check_frozen]
-    receiver_node.children[1] == :Rubinius && primitives.include?(method_name)
+  def is_a_rbx_undefined_method_node(receiver_node, method_name)
+    # based on the analysis of lib/rubinius/code/ast/transforms.rb in the rubinius-ast-2.4.0 gem
+    if not receiver_node.nil?
+      primitives = [:primitive, :invoke_primitive, :check_frozen, :call_custom, :single_block_arg, :asm, :privately]
+      receiver_node.children[1] == :Rubinius && primitives.include?(method_name)
+    else
+      [:undefined, :block_given?, :iterator?].include?(method_name)
+    end
   end
 
   def is_a_local_variable(method_name)

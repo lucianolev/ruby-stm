@@ -13,7 +13,13 @@ class SourceCodeParser
 
   def get_method_definition(a_method)
     source_location = a_method.source_location
-    get_src_of_first_expression_in(*source_location)
+    method_def_src = get_src_of_first_expression_in(*source_location)
+    method_def_node = Parser::CurrentRuby.parse(method_def_src)
+    if method_def_node.type != :def && method_def_node.type != :defs
+      method_def_node = method_def_node.children.find { |child| child.is_a?(Parser::AST::Node) &&
+          (child.type == :def || child.type == :defs) }
+    end
+    Unparser.unparse(method_def_node)
   end
 
   private
