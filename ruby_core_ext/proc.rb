@@ -1,5 +1,6 @@
 require_relative 'custom_atomic_methods/object'
 require_relative 'custom_atomic_methods/array'
+require_relative 'custom_atomic_methods/hash'
 require_relative 'object'
 require_relative '../parsing/source_code_parser'
 require_relative '../parsing/source_code_atomic_transformer'

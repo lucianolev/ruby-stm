@@ -10,12 +10,6 @@ describe 'Transaction basics' do
         @instance_var = nil
       end
 
-      def a_message
-        'a response'
-      end
-
-      alias_method :alias_message, :a_message
-
       def instance_var
         @instance_var
       end
@@ -35,7 +29,6 @@ describe 'Transaction basics' do
     @my_object = MyObject.new
 
     @test_instance_var = nil
-    @array = [1, 2, 3]
   end
 
   it 'should return self correctly' do
@@ -92,60 +85,6 @@ describe 'Transaction basics' do
     expect(a_local_var).to eq(1)
   end
 
-  it 'should write a local variable correctly' do
-    a_local_var = nil
-    proc = Proc.new { a_local_var = 1 }
-    proc.atomic
-    expect(a_local_var).to eq(1)
-  end
-
-  it 'should send a message without arguments correctly' do
-    proc = Proc.new { 'abc'.reverse }
-    expect(proc.atomic).to eq('cba')
-  end
-
-  it 'should send a message without arguments and without an explicit receiver correctly' do
-    proc = Proc.new { nil? }
-    expect(proc.atomic).to eq(false)
-  end
-
-  it 'should send a message with argument correctly' do
-    proc = Proc.new { 'abc'.include?('c') }
-    expect(proc.atomic).to eq(true)
-  end
-
-  it 'should send a message to a custom class object correctly' do
-    proc = Proc.new { @my_object.a_message }
-    expect(proc.atomic).to eq('a response')
-  end
-
-  it 'should send an operator-like message correctly' do
-    proc = Proc.new { 1 + 2 }
-    expect(proc.atomic).to eq(3)
-  end
-
-  it 'should send a message defined as a singleton method correctly' do
-    my_object = MyObject.new
-
-    def my_object.a_singleton_method
-      'a response of a singleton method'
-    end
-
-    proc = Proc.new { my_object.a_singleton_method }
-    expect(proc.atomic).to eq('a response of a singleton method')
-  end
-
-  it 'should read from array using [] operator correctly' do
-    proc = Proc.new { @array[0] }
-    expect(proc.atomic).to eq(1)
-  end
-
-  it 'should write to array using [] operator correctly' do
-    proc = Proc.new { @array[0] = 4 }
-    proc.atomic
-    expect(@array[0]).to eq(4)
-  end
-
   it 'should handle logical operators correctly' do
     proc = Proc.new { true && true }
     expect(proc.atomic).to eq(true)
@@ -159,55 +98,4 @@ describe 'Transaction basics' do
     proc = Proc.new { 1 == 1 }
     expect(proc.atomic).to eq(true)
   end
-
-  it 'should handle array definition correctly' do
-    proc = Proc.new { [1, [2, 3], [4, 5]] }
-    expect(proc.atomic).to eq([1, [2, 3], [4, 5]])
-  end
-
-  it 'should handle an if-clause correctly' do
-    proc = Proc.new {
-      # noinspection RubyResolve
-      if a_var == 1
-        'is 1'
-      else
-        'is 2'
-      end
-    }
-
-    a_var = 1
-    expect(proc.atomic).to eq('is 1')
-    a_var = 2
-    expect(proc.atomic).to eq('is 2')
-  end
-
-  it 'should handle an while loop correctly' do
-    proc = Proc.new {
-      i = 0
-      while i < 10
-        i = i + 1
-      end
-      i
-    }
-
-    expect(proc.atomic).to eq(10)
-  end
-
-  it 'should handle a method call with a block correctly' do
-    proc = Proc.new {
-      i = 0
-      10.times do
-        i = i + 1
-      end
-      i
-    }
-
-    expect(proc.atomic).to eq(10)
-  end
-
-  it 'should send a message defined by alias_method correctly' do
-    proc = Proc.new { @my_object.alias_message }
-    expect(proc.atomic).to eq('a response')
-  end
-
 end

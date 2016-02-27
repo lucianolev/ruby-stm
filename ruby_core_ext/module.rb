@@ -109,22 +109,34 @@ class Module
   end
 
   def operators_renaming_map
+    # from http://ruby-doc.org/core-2.3.0/doc/syntax/methods_rdoc.html
     {
+        :+ => :add,
+        :- => :substract,
+        :* => :multiply,
+        :** => :power,
+        :/ => :divide,
+        :% => :modulus_division,
+        :& => :and,
+        :^ => :and,
+        :>> => :shift_right,
+        :<< => :shift_left,
+        :== => :equal,
+        :!= => :not_equal,
+        :=== => :case_equality,
+        :=~ => :pattern_match,
+        :!~ => :does_not_match,
+        :<=> => :comparison,
+        :< => :less_than,
+        :<= => :less_or_eq_than,
+        :> => :greater_than,
+        :>= => :greater_or_eq_than,
+        :-@ => :minus_unary,
+        :+@ => :plus_unary,
+        :~@ => :tilde_unary,
+        ':!@'.to_sym => :tilde_unary,
         :[]= => :set_index,
         :[] => :at,
-        :+ => :plus,
-        :- => :minus,
-        :-@ => :minus_unary,
-        :* => :asterisk,
-        :/ => :slash,
-        :> => :greater_than,
-        :< => :less_than,
-        :>= => :greater_or_eq_than,
-        :<= => :less_or_eq_than,
-        :== => :double_equal_sign,
-        :!= => :not_equal,
-        :<< => :shift_left,
-        :>> => :shift_right
     }
   end
 end

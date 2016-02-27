@@ -14,12 +14,12 @@ describe Module do
     it 'should return the non-atomic name of an atomic method correclty' do
       expect(self.class.atomic_method_nonatomic_name(:__atomic__method_name)).to eq(:method_name)
       expect(self.class.atomic_method_nonatomic_name(:method_name)).to eq(:method_name)
-      expect(self.class.atomic_method_nonatomic_name(:__atomic__plus)).to eq(:+)
+      expect(self.class.atomic_method_nonatomic_name(:__atomic__add)).to eq(:+)
     end
 
     it 'should return the atomic name of a non-atomic method correclty' do
       expect(self.class.atomic_name_of(:method_name)).to eq(:__atomic__method_name)
-      expect(self.class.atomic_name_of(:+)).to eq(:__atomic__plus)
+      expect(self.class.atomic_name_of(:+)).to eq(:__atomic__add)
     end
 
   end
