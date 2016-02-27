@@ -124,6 +124,17 @@ describe 'Transaction basics' do
     expect(proc.atomic).to eq(3)
   end
 
+  it 'should send a message defined as a singleton method correctly' do
+    my_object = MyObject.new
+
+    def my_object.a_singleton_method
+      'a response of a singleton method'
+    end
+
+    proc = Proc.new { my_object.a_singleton_method }
+    expect(proc.atomic).to eq('a response of a singleton method')
+  end
+
   it 'should read from array using [] operator correctly' do
     proc = Proc.new { @array[0] }
     expect(proc.atomic).to eq(1)

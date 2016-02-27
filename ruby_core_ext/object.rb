@@ -10,19 +10,19 @@ class Object
         raise "'#{self}' does not respond to original method '#{original_method_name}'!"
       end
 
-      # Class and Module methods should be defined in singleton's
-      # class of the object, instead of in Class class.
-      if self.is_a?(Module)
-        object_class = self.singleton_class
+      # Class/Module methods and singleton methods should be defined in singleton's
+      # class of the object, instead of in Class class or the object class in the case of singleton methods.
+      if self.is_a?(Module) || self.singleton_methods.include?(original_method_name)
+        method_def_class = self.singleton_class
       else
-        object_class = self.class
+        method_def_class = self.class
       end
-      object_class.define_atomic_method(original_method_name)
+      method_def_class.define_atomic_method(original_method_name)
 
       if respond_to?(method_name, true)
         __send__(method_name, *args, &block) # resend the message
       else
-        raise "Fail to define atomic method '#{object_class}##{method_name}'!"
+        raise "Fail to define atomic method '#{method_def_class}##{method_name}'!"
       end
     else
       super
