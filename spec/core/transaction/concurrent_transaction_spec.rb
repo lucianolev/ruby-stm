@@ -37,7 +37,7 @@ describe 'Concurrent transactions' do
       a_bank_account.balance
     end
 
-    expect(withdraw_and_get_balance.call).to eq(90)
+    expect(withdraw_and_get_balance.atomic).to eq(90)
   end
 
   # TODO: does it make sense to test this?
