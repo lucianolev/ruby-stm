@@ -1,3 +1,4 @@
+require_relative '../ruby_core_ext/process'
 require_relative '../ruby_core_ext/thread'
 require_relative 'object_change'
 
@@ -36,8 +37,10 @@ class Transaction
   end
 
   def commit_if_conflict(on_conflict_block)
+    Process.atomic_commit_lock
     @object_changes.each_value do |change|
       if change.has_conflict?
+        Process.atomic_commit_unlock
         return on_conflict_block.call
       end
     end
@@ -46,6 +49,7 @@ class Transaction
         change.apply
       end
     end
+    Process.atomic_commit_unlock
     nil
   end
 
