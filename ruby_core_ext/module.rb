@@ -118,7 +118,7 @@ class Module
         :/ => :divide,
         :% => :modulus_division,
         :& => :and,
-        :^ => :and,
+        :^ => :xor,
         :>> => :shift_right,
         :<< => :shift_left,
         :== => :equal,
@@ -134,7 +134,7 @@ class Module
         :-@ => :minus_unary,
         :+@ => :plus_unary,
         :~@ => :tilde_unary,
-        ':!@'.to_sym => :tilde_unary,
+        ':!@'.to_sym => :not_unary,
         :[]= => :set_index,
         :[] => :at,
     }
