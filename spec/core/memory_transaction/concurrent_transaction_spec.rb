@@ -40,7 +40,6 @@ describe 'Concurrent transactions' do
     expect(withdraw_and_get_balance.atomic).to eq(90)
   end
 
-  # TODO: does it make sense to test this?
   it 'an atomic withdraw yields a correct balance, although the object was altered by another thread' do
     a_bank_account = BankAccount.new(100)
 
@@ -84,7 +83,6 @@ describe 'Concurrent transactions' do
     resume_thread(thread_a)
   end
 
-  # TODO: does it make sense to test this?
   it 'an atomic withdraw yields a correct balance, although the object was altered by another fiber' do
     a_bank_account = BankAccount.new(100)
 
