@@ -1,6 +1,6 @@
 require 'rspec'
 
-describe 'Transaction message sending' do
+describe 'Transactions and message sending' do
   before do
     class MyObject
       def a_message

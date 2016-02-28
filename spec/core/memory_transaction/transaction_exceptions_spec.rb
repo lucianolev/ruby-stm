@@ -1,7 +1,7 @@
 require 'rspec'
 require_relative '../../../ruby_core_ext/proc'
 
-describe 'Transactions and Exceptions' do
+describe 'Transactions and exceptions' do
   before do
     @value = 1
   end

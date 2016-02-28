@@ -1,6 +1,6 @@
 require 'rspec'
 
-describe 'Transactions collections' do
+describe 'Transactions on collections' do
   before do
     @array = [1, 2, 3]
     @hash = {a: 1, b: 2, c: 3}

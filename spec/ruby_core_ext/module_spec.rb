@@ -2,28 +2,6 @@ require 'rspec'
 require_relative '../../ruby_core_ext/module'
 
 describe Module do
-
-  context 'Test atomic method names recognition and conversion' do
-
-    it 'should correclty identify an atomic method' do
-      expect(self.class.method_is_atomic?(:a_normal_method_name)).to eq(false)
-      expect(self.class.method_is_atomic?(:+)).to eq(false)
-      expect(self.class.method_is_atomic?(:__atomic__method_name)).to eq(true)
-    end
-
-    it 'should return the non-atomic name of an atomic method correclty' do
-      expect(self.class.atomic_method_nonatomic_name(:__atomic__method_name)).to eq(:method_name)
-      expect(self.class.atomic_method_nonatomic_name(:method_name)).to eq(:method_name)
-      expect(self.class.atomic_method_nonatomic_name(:__atomic__add)).to eq(:+)
-    end
-
-    it 'should return the atomic name of a non-atomic method correclty' do
-      expect(self.class.atomic_name_of(:method_name)).to eq(:__atomic__method_name)
-      expect(self.class.atomic_name_of(:+)).to eq(:__atomic__add)
-    end
-
-  end
-
   context 'Test define atomic methods' do
     before do
       class MyObject

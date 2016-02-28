@@ -4,19 +4,19 @@ require_relative 'custom_atomic_methods/hash'
 require_relative 'object'
 require_relative '../parsing/source_code_parser'
 require_relative '../parsing/source_code_atomic_transformer'
-require_relative '../core/transaction'
+require_relative '../core/memory_transaction'
 
 class Proc
   def atomic
-    Transaction.new.do(to_atomic)
+    MemoryTransaction.do(to_atomic)
   end
 
   def atomic_if_conflict(a_block)
-    Transaction.new.do_if_conflict(to_atomic, a_block)
+    MemoryTransaction.do_if_conflict(to_atomic, a_block)
   end
 
   def atomic_retry
-    Transaction.new.retry(to_atomic)
+    MemoryTransaction.do_and_retry(to_atomic)
   end
 
   def source_code

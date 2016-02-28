@@ -1,7 +1,7 @@
 require 'parser/current'
 require 'unparser'
+require_relative '../ruby_core_ext/symbol'
 require_relative 'ast_atomic_rewriter'
-require_relative '../ruby_core_ext/module'
 
 class SourceCodeAtomicTransformer
   def transform_source_code(source_code)
@@ -33,7 +33,7 @@ class SourceCodeAtomicTransformer
 
   def replace_method_name_with_atomix_prefix(method_def_node, rewriter)
     method_name = method_def_node.children.find { |child| child.is_a?(Symbol) }
-    rewriter.replace(method_def_node.location.name, self.class.atomic_name_of(method_name).to_s)
+    rewriter.replace(method_def_node.location.name, method_name.to_atomic_method_name.to_s)
   end
 
   def remove_method_receiver_if_present(method_def_node, rewriter)

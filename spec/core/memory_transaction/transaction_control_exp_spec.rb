@@ -1,6 +1,6 @@
 require 'rspec'
 
-describe 'Transaction control expressions' do
+describe 'Transactions on control expressions' do
   it 'should handle an if-clause correctly' do
     proc = Proc.new {
       # noinspection RubyResolve

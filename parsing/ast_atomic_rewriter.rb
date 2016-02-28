@@ -1,3 +1,4 @@
+require_relative '../ruby_core_ext/symbol'
 require_relative '../ruby_core_ext/binding'
 
 class ASTAtomicRewriter < Parser::AST::Processor
@@ -21,10 +22,10 @@ class ASTAtomicRewriter < Parser::AST::Processor
         # not transform this nodes to atomic because if they are transformed, the transformations will not be applied
         # due to unmatching method name so the interpreter will raise an unhandlable method_missing.
         unless is_a_rbx_undefined_method_node(receiver_node, method_name)
-          method_name = self.class.atomic_name_of(method_name)
+          method_name = method_name.to_atomic_method_name
         end
       else
-        method_name = self.class.atomic_name_of(method_name)
+        method_name = method_name.to_atomic_method_name
       end
     end
 
@@ -37,7 +38,7 @@ class ASTAtomicRewriter < Parser::AST::Processor
     var_name, value_node = *node
 
     node.updated(:send, [
-        Parser::AST::Node.new(:self), self.class.atomic_name_of(:instance_variable_set),
+        Parser::AST::Node.new(:self), :instance_variable_set.to_atomic_method_name,
         Parser::AST::Node.new(:sym, [var_name.to_sym]), process(value_node)
     ])
   end
@@ -46,7 +47,7 @@ class ASTAtomicRewriter < Parser::AST::Processor
     var_name = node.children.first
 
     node.updated(:send, [
-        Parser::AST::Node.new(:self), self.class.atomic_name_of(:instance_variable_get),
+        Parser::AST::Node.new(:self), :instance_variable_get.to_atomic_method_name,
         Parser::AST::Node.new(:sym, [var_name.to_sym])
     ])
   end
