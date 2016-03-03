@@ -39,8 +39,10 @@ class Object
           return false
         end
       end
+      true
+    else
+      false
     end
-    true
   end
 
   def copy_internal_state(an_object)
