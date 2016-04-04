@@ -17,12 +17,23 @@ class MemoryTransaction
   end
 
   def self.current
+    unless is_there_a_transaction_running?
+      raise 'No current transaction!'
+    end
     Thread.current_transaction
   end
 
+  def self.is_there_a_transaction_running?
+    Thread.is_there_a_current_transaction_registered?
+  end
+
   def do_if_conflict(atomic_proc, on_conflict_proc)
-    Thread.set_current_transaction(self)
-    result = call_proc(atomic_proc)
+    Thread.register_current_transaction(self)
+    begin
+      result = atomic_proc.call
+    ensure
+      Thread.unregister_current_transaction
+    end
     commit_if_conflict(on_conflict_proc)
     result
   end
@@ -38,15 +49,6 @@ class MemoryTransaction
 
   def initialize
     @object_changes = {}
-  end
-
-  def call_proc(atomic_proc)
-    begin
-      result = atomic_proc.call
-    ensure
-      Thread.set_current_transaction(nil)
-    end
-    result
   end
 
   def commit

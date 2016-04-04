@@ -21,9 +21,6 @@ class Object
   end
 
   def working_copy
-    if MemoryTransaction.current.nil?
-      raise 'No current transaction!'
-    end
     MemoryTransaction.current.change_for(self).working
   end
 

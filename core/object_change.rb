@@ -1,12 +1,14 @@
 require_relative '../ruby_core_ext/object'
 
 class ObjectChange
-  attr_reader :working
-
   def initialize(object)
     @original = object
-    @working = object.clone # shallow copy :)
-    @previous = @working.clone # shallow copy :)
+    @working = object.clone # shallow copy
+    @previous = @working.clone # shallow copy
+  end
+
+  def working
+    @working
   end
 
   def apply

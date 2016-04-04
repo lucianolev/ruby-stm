@@ -43,4 +43,17 @@ describe 'Transactions and exceptions' do
 
     expect(@value).to eq(2)
   end
+
+  it 'An atomic block that rescues an exception outside, should not commit changes' do
+    begin
+      Proc.new {
+        @value = 2
+        raise 'Explosion!'
+      }.atomic
+    rescue
+      # exception rescued outside atomic block
+      expect(@value).to eq(1)
+    end
+  end
+
 end
