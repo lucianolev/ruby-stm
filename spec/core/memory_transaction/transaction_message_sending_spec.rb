@@ -17,7 +17,19 @@ describe 'Transactions and message sending' do
 
       alias_method :alias_message, :a_message
     end
+
+    class MyInheritedObject < MyObject
+      def a_message
+        'an overrided response'
+      end
+    end
+
     @my_object = MyObject.new
+    @my_inherited_object = MyInheritedObject.new
+  end
+
+  before(:each) do
+    Module.remove_all_atomic_methods
   end
 
   it 'should send a message without arguments correctly' do
@@ -58,6 +70,14 @@ describe 'Transactions and message sending' do
   it 'should send a message to a custom class object correctly' do
     proc = Proc.new { @my_object.a_message }
     expect(proc.atomic).to eq('a response')
+  end
+
+  it 'should send a message to a child class correctly' do
+    parent_message_proc = Proc.new { @my_object.a_message }
+    expect(parent_message_proc.atomic).to eq('a response')
+
+    child_message_proc = Proc.new { @my_inherited_object.a_message }
+    expect(child_message_proc.atomic).to eq('an overrided response')
   end
 
   it 'should send an operator-like message correctly' do

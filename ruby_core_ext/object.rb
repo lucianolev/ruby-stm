@@ -1,5 +1,6 @@
 require_relative 'symbol'
 require_relative 'module'
+require_relative 'class'
 require_relative '../core/memory_transaction'
 
 class Object
