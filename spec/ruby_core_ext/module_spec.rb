@@ -50,5 +50,15 @@ describe Module do
       atomic_method_name = my_object.class.define_atomic_method(:alias_change_inst_var)
       expect(my_object.class.instance_methods).to include(atomic_method_name)
     end
+
+    it 'should remove all atomic methods correctly' do
+      my_object = MyObject.new
+
+      atomic_method_name = my_object.class.define_atomic_method(:change_inst_var)
+
+      expect(my_object.class.instance_methods).to include(atomic_method_name)
+      Module.remove_all_atomic_methods
+      expect(my_object.class.instance_methods).not_to include(atomic_method_name)
+    end
   end
 end
