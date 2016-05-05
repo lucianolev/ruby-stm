@@ -30,6 +30,10 @@ class Symbol
     end
   end
 
+  def is_an_assign_ivar_method_name?
+    self.to_s.end_with? '='
+  end
+
   private
 
   def atomic_method_prefix

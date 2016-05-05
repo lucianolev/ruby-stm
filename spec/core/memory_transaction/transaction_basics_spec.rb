@@ -6,12 +6,22 @@ describe 'Transaction basics' do
     class MyObject
       @class_inst_var = nil
 
+      attr_accessor :attr_accessor_ivar
+      attr_reader :attr_reader_ivar
+      attr_writer :attr_writer_ivar
+
       def initialize
         @instance_var = nil
+        @attr_reader_ivar = 1
+        @attr_writer_ivar = nil
       end
 
       def instance_var
         @instance_var
+      end
+
+      def attr_writer_ivar
+        @attr_writer_ivar
       end
 
       def instance_var=(value)
@@ -58,6 +68,29 @@ describe 'Transaction basics' do
     proc = Proc.new { MyObject.class_inst_var=(1) }
     proc.atomic
     expect(MyObject.class_inst_var).to eq(1)
+  end
+
+  it 'should read an instance variable correctly through attr_accessor' do
+    @my_object.attr_accessor_ivar = 1
+    proc = Proc.new { @my_object.attr_accessor_ivar }
+    expect(proc.atomic).to eq(1)
+  end
+
+  it 'should write an instance variable correctly through attr_accessor' do
+    proc = Proc.new { @my_object.attr_accessor_ivar = 1 }
+    proc.atomic
+    expect(@my_object.attr_accessor_ivar).to eq(1)
+  end
+
+  it 'should read an instance variable correctly through attr_reader' do
+    proc = Proc.new { @my_object.attr_reader_ivar }
+    expect(proc.atomic).to eq(1)
+  end
+
+  it 'should write an instance variable correctly through attr_writer' do
+    proc = Proc.new { @my_object.attr_writer_ivar = 1 }
+    proc.atomic
+    expect(@my_object.attr_writer_ivar).to eq(1)
   end
 
   it 'should read an instance variable correctly' do
