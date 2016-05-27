@@ -1,4 +1,5 @@
 require 'rspec'
+require_relative '../../../src/ruby_core_ext/proc'
 
 describe 'Transactions on control expressions' do
   it 'should handle an if-clause correctly' do

@@ -1,12 +1,18 @@
+# load all ruby_core_ext
 require_relative 'custom_atomic_methods/object'
 require_relative 'custom_atomic_methods/array'
 require_relative 'custom_atomic_methods/hash'
 require_relative 'object'
-require_relative '../parsing/source_code_parser'
-require_relative '../parsing/source_code_atomic_transformer'
+
+require_relative '../source_code/proc_source_code'
 require_relative '../core/memory_transaction'
+require_relative '../to_atomic/atomic_proc'
 
 class Proc
+  def source_code
+    ProcSourceCode.new(self)
+  end
+
   def atomic
     MemoryTransaction.do(to_atomic)
   end
@@ -19,16 +25,7 @@ class Proc
     MemoryTransaction.do_and_retry(to_atomic)
   end
 
-  def source_code
-    SourceCodeParser.new.get_proc_source_code(self)
-  end
-
-  private
-
   def to_atomic
-    atomic_block_src = SourceCodeAtomicTransformer.new.transform_source_code_with_binding(self.source_code, binding)
-    self.class.new do
-      binding.eval(atomic_block_src, *source_location)
-    end
+    AtomicProc.of(self)
   end
 end

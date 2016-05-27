@@ -1,5 +1,7 @@
 require_relative '../ruby_core_ext/symbol'
-require_relative '../ruby_core_ext/binding'
+if RUBY_ENGINE == 'rbx'
+  require_relative '../ruby_core_ext/rbx/binding'
+end
 
 class ASTAtomicRewriter < Parser::AST::Processor
   def initialize(a_binding=nil)
@@ -15,13 +17,13 @@ class ASTAtomicRewriter < Parser::AST::Processor
     # wihout arguments and an explicit receiver. In that case we can desambiguate the situation by looking
     # if the supposed 'method_name' is not indeed a local variable. So, we do the atomic name transformation unless
     # it's a local variable.
-    unless is_a_local_variable(method_name)
+    unless is_a_local_variable?(method_name)
       if RUBY_ENGINE == 'rbx'
         # Some Rubinius' send nodes are NOT defined as methods. Instead they are transformed using defined AST
         # transformations found in the kernel which emit a special bytecode instead of a normal message send. We should
         # not transform this nodes to atomic because if they are transformed, the transformations will not be applied
         # due to unmatching method name so the interpreter will raise an unhandlable method_missing.
-        unless is_a_rbx_undefined_method_node(receiver_node, method_name)
+        unless is_a_rbx_undefined_method_node?(receiver_node, method_name)
           method_name = method_name.to_atomic_method_name
         end
       else
@@ -54,7 +56,7 @@ class ASTAtomicRewriter < Parser::AST::Processor
 
   private
 
-  def is_a_rbx_undefined_method_node(receiver_node, method_name)
+  def is_a_rbx_undefined_method_node?(receiver_node, method_name)
     # based on the analysis of lib/rubinius/code/ast/transforms.rb in the rubinius-ast-2.4.0 gem
     if not receiver_node.nil?
       primitives = [:primitive, :invoke_primitive, :check_frozen, :call_custom, :single_block_arg, :asm, :privately]
@@ -64,7 +66,7 @@ class ASTAtomicRewriter < Parser::AST::Processor
     end
   end
 
-  def is_a_local_variable(method_name)
+  def is_a_local_variable?(method_name)
     begin
       !@source_binding.nil? and @source_binding.local_variable_defined?(method_name)
     rescue NameError # some method name are not valid local variable names so local_variable_defined? will raise a NameError

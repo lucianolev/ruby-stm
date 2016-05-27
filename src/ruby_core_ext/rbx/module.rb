@@ -1,7 +1,8 @@
 require_relative 'kernel_eval_compiler'
 
 class Module
-  def class_eval_with_kernel_code_support(string, filename="(eval)", line=1)
+
+  def module_eval_with_kernel_code_support(string, filename="(eval)", line=1)
     # Code below from Module#module_eval found in kernel/common/eval.rb:175 (rbx-3.14),
     # with an alternative custom compiler (KernelEvalCompiler)
 
@@ -20,4 +21,7 @@ class Module
 
     be.call_under self, cs, true, self
   end
+
+  alias_method :class_eval_with_kernel_code_support, :module_eval_with_kernel_code_support
+
 end

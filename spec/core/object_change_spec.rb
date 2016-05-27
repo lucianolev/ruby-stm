@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../../core/object_change'
+require_relative '../../src/core/object_change'
 
 describe ObjectChange do
   context 'Test object change on custom class object' do

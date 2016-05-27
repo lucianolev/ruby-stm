@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../../ruby_core_ext/object'
+require_relative '../../src/ruby_core_ext/object'
 
 describe Object do
 

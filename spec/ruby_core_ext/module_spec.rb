@@ -1,8 +1,8 @@
 require 'rspec'
-require_relative '../../ruby_core_ext/module'
+require_relative '../../src/ruby_core_ext/module'
 
 describe Module do
-  context 'Test define atomic methods' do
+  context 'Test define and remove atomic methods' do
     before do
       class MyObject
         attr_accessor :internal_var

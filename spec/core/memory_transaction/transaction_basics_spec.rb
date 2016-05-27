@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../../../ruby_core_ext/proc'
+require_relative '../../../src/ruby_core_ext/proc'
 
 describe 'Transaction basics' do
   before do
