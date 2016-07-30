@@ -8,7 +8,8 @@ class Object
     if method_name.is_an_atomic_method_name?
       original_method_name = method_name.to_nonatomic_method_name
       assert_original_method_is_defined(original_method_name)
-      class_of_method_def(original_method_name).define_atomic_method(original_method_name)
+      class_of_method = class_of_method_def(original_method_name)
+      class_of_method.define_atomic_method(original_method_name)
       resend_atomic_method(method_name, args, block)
     else
       super
@@ -54,10 +55,9 @@ class Object
 
   private
 
-  def class_of_method_def(original_method_name)
-    # Class/Module methods and singleton methods should be defined in singleton's
-    # class of the object, instead of in Class class or the object class in the case of singleton methods.
-    if self.is_a?(Module) || self.singleton_methods.include?(original_method_name)
+  def class_of_method_def(method_name)
+    # Singleton methods are defined in singleton's class of the object instead of object's class.
+    if self.singleton_methods.include?(method_name)
       self.singleton_class
     else
       self.class
