@@ -16,6 +16,10 @@ describe 'Transactions and message sending' do
         a + b
       end
 
+      def self.a_class_message
+        'a class message response'
+      end
+
       alias_method :alias_message, :a_message
     end
 
@@ -84,6 +88,11 @@ describe 'Transactions and message sending' do
   it 'should send an operator-like message correctly' do
     proc = Proc.new { 1 + 2 }
     expect(proc.atomic).to eq(3)
+  end
+
+  it 'should send a class message correctly' do
+    proc = Proc.new { MyObject.a_class_message }
+    expect(proc.atomic).to eq('a class message response')
   end
 
   it 'should send a message defined as a singleton method correctly' do
