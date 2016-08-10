@@ -9,10 +9,6 @@ require_relative '../core/memory_transaction'
 require_relative '../to_atomic/atomic_proc'
 
 class Proc
-  def source_code
-    ProcSourceCode.new(self)
-  end
-
   def atomic
     MemoryTransaction.do(to_atomic)
   end
@@ -27,5 +23,9 @@ class Proc
 
   def to_atomic
     AtomicProc.of(self)
+  end
+
+  def source_code
+    ProcSourceCode.new(self)
   end
 end

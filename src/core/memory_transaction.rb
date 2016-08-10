@@ -4,12 +4,12 @@ require_relative 'object_change'
 class MemoryTransaction
   private_class_method :new
 
-  def self.do(atomic_proc)
-    self.do_if_conflict(atomic_proc, Proc.new { MemoryTransaction.signal_conflict })
-  end
-
   def self.do_if_conflict(atomic_proc, on_conflict_proc)
     new.do_if_conflict(atomic_proc, on_conflict_proc)
+  end
+
+  def self.do(atomic_proc)
+    self.do_if_conflict(atomic_proc, Proc.new { MemoryTransaction.signal_conflict })
   end
 
   def self.do_and_retry(atomic_proc)
