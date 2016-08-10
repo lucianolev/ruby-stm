@@ -5,6 +5,15 @@ class ObjectSourceCode
 
   def initialize(obj)
     @source_code = parse_source_code(obj)
+    @ast = Parser::CurrentRuby.parse(@source_code)
+  end
+
+  def to_s
+    @source_code
+  end
+
+  def to_ast
+    @ast
   end
 
   def apply_ast_transformation!(ast_processor)
@@ -21,17 +30,6 @@ class ObjectSourceCode
     buffer = Parser::Source::Buffer.new('(method buffer)')
     buffer.source = @source_code
     Parser::Source::Rewriter.new(buffer)
-  end
-
-  def to_s
-    @source_code
-  end
-
-  def to_ast
-    if @ast.nil?
-      @ast = Parser::CurrentRuby.parse(@source_code)
-    end
-    @ast
   end
 
   private
