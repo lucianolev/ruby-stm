@@ -1,7 +1,5 @@
 # load all ruby_core_ext
-require_relative 'custom_atomic_methods/object'
-require_relative 'custom_atomic_methods/array'
-require_relative 'custom_atomic_methods/hash'
+Dir[File.join(__dir__, 'custom_atomic_methods', '*.rb')].each { |file| require_relative file }
 require_relative 'object'
 
 require_relative '../source_code/proc_source_code'
