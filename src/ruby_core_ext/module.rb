@@ -11,12 +11,13 @@ class Module
     end
   end
 
-  def define_atomic_method(original_method_name)
-    atomic_method = instance_method(original_method_name).to_atomic
+  def define_atomic_method(orig_meth_name)
+    atomic_method = instance_method(orig_meth_name).to_atomic
     atomic_method.define_in(self)
 
-    if original_method_name.to_atomic_method_name != atomic_method.name
-      alias_method(original_method_name.to_atomic_method_name, atomic_method.name)
+    if orig_meth_name.to_atomic_method_name != atomic_method.name
+      alias_method(orig_meth_name.to_atomic_method_name,
+                   atomic_method.name)
     end
 
     self.class.register_module_with_an_atomic_method(self)
