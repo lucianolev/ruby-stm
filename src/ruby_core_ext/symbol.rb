@@ -85,6 +85,7 @@ class Symbol
         ':!@'.to_sym => :not_unary,
         :[]= => :set_index,
         :[] => :at,
+        :| => :pipe, # not documented?
     }
   end
 end
