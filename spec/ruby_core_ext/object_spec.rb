@@ -6,9 +6,10 @@ describe Object do
   context 'Test same internal state recognition of primitive morphable objects' do
 
     it 'should correctly check if another String has the same internal state' do
-      a_string = 'Hello hello'
-      another_string = 'Hello hello'
-      different_string = 'Hello goodbye'
+      a_string = 'hello hello'
+      another_string = a_string.clone
+      different_string = a_string.clone
+      different_string.capitalize!
       expect(a_string.has_same_internal_state?(another_string)).to eq(true)
       expect(a_string.has_same_internal_state?(different_string)).to eq(false)
     end

@@ -3,6 +3,13 @@ require_relative 'module'
 require_relative 'class'
 require_relative '../core/memory_transaction'
 
+if RUBY_ENGINE == 'rbx'
+  Dir[File.join(__dir__, 'primitives_internal_state/rbx', '*.rb')].each { |file| require_relative file }
+end
+if RUBY_ENGINE == 'ruby'
+  Dir[File.join(__dir__, 'primitives_internal_state/mri', '*.rb')].each { |file| require_relative file }
+end
+
 class Object
   def method_missing(method_name, *args, &block)
     if method_name.is_an_atomic_method_name?
@@ -20,37 +27,21 @@ class Object
     MemoryTransaction.current.change_for(self).working
   end
 
-  def has_same_internal_state?(an_object)
-    if self.is_a_morphable_primitive?
-      return self == an_object
-    end
-
-    same_number_of_inst_vars = self.instance_variables.size == an_object.instance_variables.size
-    if same_number_of_inst_vars
-      self.instance_variables.each do |inst_var_name|
-        if self.instance_variable_get(inst_var_name) != an_object.instance_variable_get(inst_var_name)
-          return false
-        end
+  def has_same_internal_state?(an_obj)
+    self.instance_variables.each do |ivar_name|
+      if self.instance_variable_get(ivar_name) !=
+          an_obj.instance_variable_get(ivar_name)
+        return false
       end
-      true
-    else
-      false
     end
+    true
   end
 
   def copy_internal_state(an_object)
-    if self.is_a_morphable_primitive?
-      self.replace(an_object)
-      return
-    end
-
     an_object.instance_variables.each do |inst_var_name|
-      self.instance_variable_set(inst_var_name, an_object.instance_variable_get(inst_var_name))
+      self.instance_variable_set(inst_var_name,
+                                 an_object.instance_variable_get(inst_var_name))
     end
-  end
-
-  def is_a_morphable_primitive?
-    self.is_a?(Array) or self.is_a?(String) or self.is_a?(Hash)
   end
 
   private
