@@ -16,7 +16,10 @@ class Class < Module
 
   def define_atomic_method_for_subclasses(orig_meth_name)
     subclasses_implementing_method(orig_meth_name).each do |klass|
-      klass.define_atomic_method(orig_meth_name)
+      atomic_variant = orig_meth_name.to_atomic_method_name
+      unless klass.instance_methods(false).include?(atomic_variant)
+        klass.define_atomic_method(orig_meth_name)
+      end
     end
   end
 end
