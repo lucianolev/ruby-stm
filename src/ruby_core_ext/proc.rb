@@ -1,7 +1,9 @@
 # load all ruby_core_ext
-Dir[File.join(__dir__, 'custom_atomic_methods', '*.rb')].each { |file| require_relative file }
-require_relative 'object'
+if RUBY_ENGINE == 'rbx'
+  Dir[File.join(__dir__, 'custom_atomic_methods/rbx', '*.rb')].each { |file| require_relative file }
+end
 
+require_relative 'object'
 require_relative '../source_code/proc_source_code'
 require_relative '../core/memory_transaction'
 require_relative '../to_atomic/atomic_proc'
