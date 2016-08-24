@@ -34,4 +34,8 @@ class UnboundMethod
     end
     false
   end
+
+  def define_in(a_module)
+    a_module.send(:define_method, name, self)
+  end
 end
