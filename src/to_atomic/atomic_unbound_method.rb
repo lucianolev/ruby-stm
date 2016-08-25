@@ -15,11 +15,11 @@ class AtomicUnboundMethod
   end
 
   def source_code
-    method_source_code = @original_method.source_code
-    method_source_code.remove_method_receiver_if_present!
-    method_source_code.change_name_in_definition!(name)
-    method_source_code.apply_ast_transformation!(ASTAtomicRewriter.new)
-    method_source_code
+    method_src_code = @original_method.source_code
+    method_src_code.remove_method_receiver_if_present!
+    method_src_code.change_name_in_definition!(name)
+    method_src_code.apply_ast_transformation!(ASTAtomicRewriter.new)
+    method_src_code
   end
 
   def define_in(a_module)
