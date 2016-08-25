@@ -25,7 +25,7 @@ class AtomicUnboundMethod
     self
   end
 
-  def define_in(a_module)
+  def define_in(a_module, name)
     if not can_transform_original_to_atomic?
       a_module.send(:__original__define_method, name,
                     @original_method)
