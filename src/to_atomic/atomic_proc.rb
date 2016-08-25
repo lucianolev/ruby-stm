@@ -21,6 +21,10 @@ class AtomicProc
     source_code
   end
 
+  def to_atomic
+    self
+  end
+
   private
 
   def method_missing(symbol, *args)
