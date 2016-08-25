@@ -23,7 +23,8 @@ class ASTAtomicRewriter < Parser::AST::Processor
         # transformations found in the kernel which emit a special bytecode instead of a normal message send. We should
         # not transform this nodes to atomic because if they are transformed, the transformations will not be applied
         # due to unmatching method name so the interpreter will raise an unhandlable method_missing.
-        unless is_a_rbx_undefined_method_node?(receiver_node, method_name)
+        unless is_a_rbx_undefined_method_node?(receiver_node,
+                                               method_name)
           method_name = method_name.to_atomic_method_name
         end
       else
@@ -40,8 +41,10 @@ class ASTAtomicRewriter < Parser::AST::Processor
     var_name, value_node = *node
 
     node.updated(:send, [
-        Parser::AST::Node.new(:self), :instance_variable_set.to_atomic_method_name,
-        Parser::AST::Node.new(:sym, [var_name.to_sym]), process(value_node)
+        Parser::AST::Node.new(:self),
+        :instance_variable_set.to_atomic_method_name,
+        Parser::AST::Node.new(:sym, [var_name.to_sym]),
+        process(value_node)
     ])
   end
 
@@ -49,7 +52,8 @@ class ASTAtomicRewriter < Parser::AST::Processor
     var_name = node.children.first
 
     node.updated(:send, [
-        Parser::AST::Node.new(:self), :instance_variable_get.to_atomic_method_name,
+        Parser::AST::Node.new(:self),
+        :instance_variable_get.to_atomic_method_name,
         Parser::AST::Node.new(:sym, [var_name.to_sym])
     ])
   end
@@ -59,8 +63,11 @@ class ASTAtomicRewriter < Parser::AST::Processor
   def is_a_rbx_undefined_method_node?(receiver_node, method_name)
     # based on the analysis of lib/rubinius/code/ast/transforms.rb in the rubinius-ast-2.4.0 gem
     if not receiver_node.nil?
-      primitives = [:primitive, :invoke_primitive, :check_frozen, :call_custom, :single_block_arg, :asm, :privately]
-      receiver_node.children[1] == :Rubinius && primitives.include?(method_name)
+      primitives = [:primitive, :invoke_primitive, :check_frozen,
+                    :call_custom, :single_block_arg, :asm,
+                    :privately]
+      receiver_node.children[1] == :Rubinius &&
+          primitives.include?(method_name)
     else
       [:undefined, :block_given?, :iterator?].include?(method_name)
     end
@@ -68,7 +75,8 @@ class ASTAtomicRewriter < Parser::AST::Processor
 
   def is_a_local_variable?(method_name)
     begin
-      !@source_binding.nil? and @source_binding.local_variable_defined?(method_name)
+      !@source_binding.nil? and
+          @source_binding.local_variable_defined?(method_name)
     rescue NameError # some method name are not valid local variable names so local_variable_defined? will raise a NameError
       false
     end
