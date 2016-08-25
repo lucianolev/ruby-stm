@@ -16,7 +16,6 @@ class AtomicUnboundMethod
 
   def source_code
     method_src_code = @original_method.source_code
-    method_src_code.remove_method_receiver_if_present!
     method_src_code.change_name_in_definition!(name)
     method_src_code.apply_ast_transformation!(ASTAtomicRewriter.new)
     method_src_code

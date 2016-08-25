@@ -3,6 +3,23 @@ require_relative 'source_code_reader'
 
 class UnboundMethodSourceCode < ObjectSourceCode
 
+  def initialize(obj)
+    super
+    remove_method_receiver_if_present!
+  end
+
+  def name_in_definition
+    to_ast.children[0]
+  end
+
+  def change_name_in_definition!(new_name)
+    source_rewriter = new_source_rewriter
+    source_rewriter.replace(to_ast.location.name, new_name.to_s)
+    apply_source_rewrite!(source_rewriter)
+  end
+
+  private
+
   def remove_method_receiver_if_present!
     source_rewriter = new_source_rewriter
     dot_separator = to_ast.location.operator
@@ -13,14 +30,6 @@ class UnboundMethodSourceCode < ObjectSourceCode
     end
     apply_source_rewrite!(source_rewriter)
   end
-
-  def change_name_in_definition!(new_name)
-    source_rewriter = new_source_rewriter
-    source_rewriter.replace(to_ast.location.name, new_name.to_s)
-    apply_source_rewrite!(source_rewriter)
-  end
-
-  private
 
   def parse_source_code(a_method)
     source_location = a_method.source_location

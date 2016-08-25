@@ -33,7 +33,7 @@ end
     end
 
     expected_expression_src = <<-CODE
-def self.class_say
+def class_say
   @internal_var = "hello"
   local_var = @internal_var
   puts(local_var)
