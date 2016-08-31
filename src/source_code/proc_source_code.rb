@@ -5,19 +5,11 @@ class ProcSourceCode < ObjectSourceCode
 
   private
 
-  def parse_source_code(a_proc)
-    source_location = a_proc.source_location
-    proc_definition = SourceCodeReader.new.get_src_of_first_expression_in(*source_location)
-    proc_assign_node = Parser::CurrentRuby.parse(proc_definition)
-    body_node = get_body_node_from_proc_def(proc_assign_node)
-    Unparser.unparse(body_node)
-  end
-
-  def get_body_node_from_proc_def(proc_def_node)
-    if proc_def_node.type == :block
-      block_node = proc_def_node
+  def find_source_code_node(parsed_node)
+    if parsed_node.type == :block
+      block_node = parsed_node
     else
-      block_node = proc_def_node.children.find { |child| child.is_a?(Parser::AST::Node) && child.type == :block }
+      block_node = parsed_node.children.find { |child| child.is_a?(Parser::AST::Node) && child.type == :block }
     end
     # block_node children array:
     # [0] (send

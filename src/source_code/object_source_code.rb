@@ -4,7 +4,8 @@ require 'unparser'
 class ObjectSourceCode
 
   def initialize(obj)
-    @source_code = parse_source_code(obj)
+    @obj = obj
+    @source_code = parse_source_code
     @ast = Parser::CurrentRuby.parse(@source_code)
   end
 
@@ -34,7 +35,15 @@ class ObjectSourceCode
 
   private
 
-  def parse_source_code(obj)
+  def parse_source_code
+    src_location = @obj.source_location
+    exp_src = SourceCodeReader.new.get_src_of_first_expression_in(*src_location)
+    parsed_node = Parser::CurrentRuby.parse(exp_src)
+    source_code_node = find_source_code_node(parsed_node)
+    Unparser.unparse(source_code_node)
+  end
+
+  def find_source_code_node(parsed_node)
     raise NotImplementedError
   end
 

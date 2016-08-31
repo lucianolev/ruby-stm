@@ -31,33 +31,25 @@ class UnboundMethodSourceCode < ObjectSourceCode
     apply_source_rewrite!(source_rewriter)
   end
 
-  def parse_source_code(a_method)
-    source_location = a_method.source_location
-    method_def_src = SourceCodeReader.new.get_src_of_first_expression_in(*source_location)
-    method_def_node = get_method_def_node(a_method, method_def_src)
-    Unparser.unparse(method_def_node)
-  end
-
-  def get_method_def_node(a_method, method_def_src)
-    guessed_method_def_node = Parser::CurrentRuby.parse(method_def_src)
-    if is_an_attr_def_node?(guessed_method_def_node)
-      generate_attr_method(a_method)
+  def find_source_code_node(parsed_node)
+    if is_an_attr_def_node?(parsed_node)
+      generate_attr_method_node
     else
-      method_def_node = search_for_method_def_node(guessed_method_def_node)
+      method_def_node = search_for_method_def_node(parsed_node)
       unless method_def_node
-        raise "Could not find definition for #{a_method}"
+        raise "Could not find definition for #{@obj}"
       end
       method_def_node
     end
   end
 
-  def generate_attr_method(attr_method)
-    if attr_method.name.is_an_assign_ivar_method_name?
-      ivar_name = "@#{attr_method.name.to_s[0..-2]}".to_sym # removes the '=' at the end
-      generate_ivar_writer_method(ivar_name)
+  def generate_attr_method_node
+    if @obj.name.is_an_assign_ivar_method_name?
+      ivar_name = "@#{@obj.name.to_s[0..-2]}".to_sym # removes the '=' at the end
+      generate_ivar_writer_method_node(ivar_name)
     else
-      ivar_name = "@#{attr_method.name.to_s}".to_sym
-      generate_ivar_reader_method(ivar_name)
+      ivar_name = "@#{@obj.name.to_s}".to_sym
+      generate_ivar_reader_method_node(ivar_name)
     end
   end
 
@@ -79,14 +71,14 @@ class UnboundMethodSourceCode < ObjectSourceCode
     ast_node.type == :send && [:attr_accessor, :attr_reader, :attr_writer].include?(ast_node.children[1])
   end
 
-  def generate_ivar_reader_method(ivar_name)
+  def generate_ivar_reader_method_node(ivar_name)
     new_method_name = ivar_name.to_s[1..-1].to_sym # removes the @ sign at the beginning
     no_args_node = Parser::AST::Node.new(:args)
     read_ivar_body_node = Parser::AST::Node.new(:ivar, [ivar_name])
     Parser::AST::Node.new(:def, [new_method_name, no_args_node, read_ivar_body_node])
   end
 
-  def generate_ivar_writer_method(ivar_name)
+  def generate_ivar_writer_method_node(ivar_name)
     new_method_name = "#{ivar_name.to_s[1..-1].to_sym}=" # removes the @ sign at the beginning and adds '=' at the end
     args_node = Parser::AST::Node.new(:args, [Parser::AST::Node.new(:arg, [:value])])
     write_ivar_body_node = Parser::AST::Node.new(:ivasgn,
