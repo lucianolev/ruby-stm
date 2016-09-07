@@ -58,7 +58,8 @@ class UnboundMethodSourceCode < ObjectSourceCode
       ast_node
     else
       ast_node.children.find(ifnone=false) do |child|
-        child.is_a?(Parser::AST::Node) && is_a_method_def_node?(child)
+        child.is_a?(Parser::AST::Node) &&
+            is_a_method_def_node?(child)
       end
     end
   end
@@ -68,22 +69,28 @@ class UnboundMethodSourceCode < ObjectSourceCode
   end
 
   def is_an_attr_def_node?(ast_node)
-    ast_node.type == :send && [:attr_accessor, :attr_reader, :attr_writer].include?(ast_node.children[1])
+    attr_types = [:attr_accessor, :attr_reader, :attr_writer]
+    ast_node.type == :send &&
+        attr_types.include?(ast_node.children[1])
   end
 
   def generate_ivar_reader_method_node(ivar_name)
     new_method_name = ivar_name.to_s[1..-1].to_sym # removes the @ sign at the beginning
     no_args_node = Parser::AST::Node.new(:args)
     read_ivar_body_node = Parser::AST::Node.new(:ivar, [ivar_name])
-    Parser::AST::Node.new(:def, [new_method_name, no_args_node, read_ivar_body_node])
+    Parser::AST::Node.new(:def, [new_method_name, no_args_node,
+                                 read_ivar_body_node])
   end
 
   def generate_ivar_writer_method_node(ivar_name)
     new_method_name = "#{ivar_name.to_s[1..-1].to_sym}=" # removes the @ sign at the beginning and adds '=' at the end
-    args_node = Parser::AST::Node.new(:args, [Parser::AST::Node.new(:arg, [:value])])
-    write_ivar_body_node = Parser::AST::Node.new(:ivasgn,
-                                                 [ivar_name, Parser::AST::Node.new(:lvar, [:value])])
-    Parser::AST::Node.new(:def, [new_method_name, args_node, write_ivar_body_node])
+    args_node_args = [Parser::AST::Node.new(:arg, [:value])]
+    args_node = Parser::AST::Node.new(:args, args_node_args)
+    write_ivar_args = [ivar_name, Parser::AST::Node.new(:lvar,
+                                                        [:value])]
+    write_ivar_body = Parser::AST::Node.new(:ivasgn, write_ivar_args)
+    Parser::AST::Node.new(:def, [new_method_name, args_node,
+                                 write_ivar_body])
   end
 
 end

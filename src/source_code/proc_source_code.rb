@@ -9,7 +9,9 @@ class ProcSourceCode < ObjectSourceCode
     if parsed_node.type == :block
       block_node = parsed_node
     else
-      block_node = parsed_node.children.find { |child| child.is_a?(Parser::AST::Node) && child.type == :block }
+      block_node = parsed_node.children.find do |child|
+        child.is_a?(Parser::AST::Node) && child.type == :block
+      end
     end
     # block_node children array:
     # [0] (send

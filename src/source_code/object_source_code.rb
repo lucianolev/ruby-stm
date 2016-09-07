@@ -36,8 +36,9 @@ class ObjectSourceCode
   private
 
   def parse_source_code
-    src_location = @obj.source_location
-    exp_src = SourceCodeReader.new.get_src_of_first_expression_in(*src_location)
+    file, line = @obj.source_location
+    src_reader = SourceCodeReader.new
+    exp_src = src_reader.get_src_of_first_expression_in(file, line)
     parsed_node = Parser::CurrentRuby.parse(exp_src)
     source_code_node = find_source_code_node(parsed_node)
     Unparser.unparse(source_code_node)
