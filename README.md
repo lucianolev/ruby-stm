@@ -1,22 +1,31 @@
-STM for the Ruby language
-=========================
+A transparent implementation of Software Transactional Memory for the Ruby language
+===================================================================================
+
+This is an academic project. It's not optimized in any way to be 
+used in real life, resource demanding escenarios (it should be 
+useful as a base to achieve that goal though).
 
 Requirements
 ------------
 Gems: parser, unparser.
 
-Supports both MRI>2.1 and Rubinius>3.14.
+Tested with:
+ - MRI 2.1 / 2.2 / 2.3
+ - Rubinius 3.14
 
 Usage
 -----
 
-First, require ruby_core_ext/proc.rb to extend Proc class with the 'atomic' method.
+First, require ruby_core_ext/proc.rb to extend Proc class with the 
+'atomic' method.
 
 Send the 'atomic' message to a Proc you want to execute atomically.
 
-To execute atomically and handle a commit conflict use 'atomic\_if\_conflict \&a\_block' 
+To execute atomically and handle a commit conflict use 
+'atomic\_if\_conflict \&a\_block' 
 
-Also, 'atomic\_retry' is available for automatic retry the transaction on commit conflict.
+Also, 'atomic\_retry' is available for automatic retry the 
+transaction on commit conflict.
 
 "Real life" example
 -------------------
@@ -70,11 +79,17 @@ Also, 'atomic\_retry' is available for automatic retry the transaction on commit
     puts "another_account balance: #{another_account.balance}"
     puts "total money (should be 50): #{(my_account.balance + another_account.balance)}"
 
-Use 'transfer.call' instead of 'transfer.atomic_retry' to execute non-atomically.
+Use 'transfer.call' instead of 'transfer.atomic_retry' to execute 
+non-atomically.
 
 Known issues
 ------------
 
 - Cannot handle multiple procs in a single line (separated by ';').
+- Methods or procs defined by metaprogramming means (like eval) cannot 
+be executed inside a transaction out of the box (must implemente atomic 
+variant automatically).
 - Nested transactions are not supported.
-- For the moment, atomicity is only guaranteed for instance variables (including class instance variables).
+- For the moment, atomicity is only guaranteed for instance variables 
+(including class instance variables but not class variables).
+- Performance is poor, especially in Rubinius. 
