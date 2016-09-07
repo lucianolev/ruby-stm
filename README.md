@@ -85,11 +85,13 @@ non-atomically.
 Known issues
 ------------
 
-- Cannot handle multiple procs in a single line (separated by ';').
-- Methods or procs defined by metaprogramming means (like eval) cannot 
-be executed inside a transaction out of the box (must implemente atomic 
-variant automatically).
+- Cannot handle multiple procs defined in a single line (separated 
+by ';').
+- Methods or procs defined by metaprogramming means (like eval) 
+cannot be executed inside a transaction out of the box (must 
+implement atomic variant manually).
 - Nested transactions are not supported.
-- For the moment, atomicity is only guaranteed for instance variables 
-(including class instance variables but not class variables).
-- Performance is poor, especially in Rubinius. 
+- For the moment, atomicity is only guaranteed for instance 
+variables (including class instance variables but not class 
+variables).
+- Performance is poor, especially in Rubinius.
