@@ -1,43 +1,32 @@
-A transparent implementation of Software Transactional Memory for the Ruby language
-===================================================================================
+# A transparent implementation of Software Transactional Memory for the Ruby language
 
-This is an academic project. It's not optimized in any way to be 
-used in real life, resource demanding escenarios (it should be 
-useful as a base to achieve that goal though).
+This is an academic project. It's not optimized in any way to be used in real life, resource demanding escenarios (it should be useful as a base to achieve that goal though).
 
-Requirements
-------------
+## Requirements
+
 Gems: parser, unparser.
 
 Tested with:
  - MRI 2.1 / 2.2 / 2.3
  - Rubinius 3.14
 
-Usage
------
+## Usage
 
-First, require ruby_core_ext/proc.rb to extend Proc class with the 
-'atomic' method.
+First, require ruby_core_ext/proc.rb to extend Proc class with the 'atomic' method.
 
 Send the 'atomic' message to a Proc you want to execute atomically.
 
-To execute atomically and handle a commit conflict use 
-'atomic\_if\_conflict \&a\_block' 
+To execute atomically and handle a commit conflict use 'atomic\_if\_conflict \&a\_block'.
 
-Also, 'atomic\_retry' is available for automatic retry the 
-transaction on commit conflict.
+Also, 'atomic\_retry' is available for automatic retry the transaction on commit conflict.
 
-"Real life" example
--------------------
+## "Real life" example
 
-See the `examples` directory for scripts that demonstrate how to use this
-library.
+See the `examples` directory for scripts that demonstrate how to use this library.
 
-Use 'transfer.call' instead of 'transfer.atomic_retry' to execute 
-non-atomically.
+Use 'transfer.call' instead of 'transfer.atomic_retry' to execute non-atomically.
 
-Known issues
-------------
+## Known issues
 
 - Cannot handle multiple procs defined in a single line (separated 
 by ';').
