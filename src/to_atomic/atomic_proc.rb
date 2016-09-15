@@ -3,7 +3,14 @@ require_relative 'ast_atomic_rewriter'
 class AtomicProc
 
   def self.of(a_proc)
+    assert_no_arguments(a_proc)
     new(a_proc)
+  end
+
+  def self.assert_no_arguments(a_proc)
+    if a_proc.arity != 0
+      raise 'Cannot atomize a proc with arguments!'
+    end
   end
 
   def initialize(a_proc)
