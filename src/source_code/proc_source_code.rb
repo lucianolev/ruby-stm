@@ -12,6 +12,9 @@ class ProcSourceCode < ObjectSourceCode
       block_node = parsed_node.children.find do |child|
         child.is_a?(Parser::AST::Node) && child.type == :block
       end
+      unless block_node
+        raise "Could not find definition for #{@obj}"
+      end
     end
     # block_node children array:
     # [0] (send
