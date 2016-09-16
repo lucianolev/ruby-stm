@@ -4,7 +4,7 @@ This is an academic project. It's not optimized in any way to be used in real li
 
 ## Requirements
 
-Gems: parser, unparser.
+Gems: parser, unparser, rspec.
 
 Tested with:
  - MRI 2.1 / 2.2 / 2.3
