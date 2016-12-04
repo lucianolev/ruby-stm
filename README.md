@@ -6,6 +6,8 @@ This is an academic project. It's not optimized in any way to be used in real li
 
 Gems: parser, unparser, rspec.
 
+Use `bundle install` to install them.
+
 Tested with:
  - MRI 2.1 / 2.2 / 2.3
  - Rubinius 3.14
