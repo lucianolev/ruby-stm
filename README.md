@@ -10,7 +10,7 @@ Use `bundle install` to install them.
 
 Tested with:
  - MRI 2.1 / 2.2 / 2.3
- - Rubinius 3.14
+ - Rubinius 3.69+
 
 ## Usage
 
