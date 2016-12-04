@@ -1,7 +1,4 @@
 require_relative '../ruby_core_ext/symbol'
-if RUBY_ENGINE == 'rbx'
-  require_relative '../ruby_core_ext/rbx/binding'
-end
 
 class ASTAtomicRewriter < Parser::AST::Processor
   def initialize(a_binding=nil)
@@ -61,7 +58,7 @@ class ASTAtomicRewriter < Parser::AST::Processor
   private
 
   def is_a_rbx_undefined_method_node?(receiver_node, method_name)
-    # based on the analysis of lib/rubinius/code/ast/transforms.rb in the rubinius-ast-2.4.0 gem
+    # based on the analysis of lib/rubinius/code/ast/transforms.rb in the rubinius-ast-3.8 gem
     if not receiver_node.nil?
       primitives = [:primitive, :invoke_primitive, :check_frozen,
                     :call_custom, :single_block_arg, :asm,
