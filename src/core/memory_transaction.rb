@@ -39,10 +39,7 @@ class MemoryTransaction
   end
 
   def change_for(an_object)
-    unless @object_changes.has_key?(an_object)
-      @object_changes[an_object] = ObjectChange.new(an_object)
-    end
-    @object_changes[an_object]
+    @object_changes[an_object] ||= ObjectChange.new(an_object)
   end
 
   private
