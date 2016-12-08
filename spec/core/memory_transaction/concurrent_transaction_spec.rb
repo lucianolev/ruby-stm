@@ -72,7 +72,7 @@ describe 'Concurrent transactions' do
           a_bank_account.withdraw(3)
           Thread.stop  # interrupt the thread
         end.atomic
-      end.to raise_exception 'CommitConflict'
+      end.to raise_exception "CommitConflict: #{a_bank_account} was changed during current transaction."
     end
 
     run_new_thread_until_stopped do

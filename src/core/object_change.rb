@@ -11,6 +11,10 @@ class ObjectChange
     @working
   end
 
+  def original
+    @original
+  end
+
   def apply
     @original.copy_internal_state(@working)
   end

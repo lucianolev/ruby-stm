@@ -9,7 +9,7 @@ class MemoryTransaction
   end
 
   def self.do(atomic_proc)
-    self.do_if_conflict(atomic_proc, Proc.new { MemoryTransaction.signal_conflict })
+    self.do_if_conflict(atomic_proc, MemoryTransaction.signal_conflict_block)
   end
 
   def self.do_and_retry(atomic_proc)
@@ -49,7 +49,7 @@ class MemoryTransaction
   end
 
   def commit
-    commit_if_conflict(Proc.new { MemoryTransaction.signal_conflict })
+    commit_if_conflict(MemoryTransaction.signal_conflict_block)
   end
 
   def commit_if_conflict(on_conflict_block)
@@ -57,7 +57,7 @@ class MemoryTransaction
     @object_changes.each_value do |change|
       if change.has_conflict?
         MemoryTransaction.commit_unlock
-        return on_conflict_block.call
+        return on_conflict_block.call(change.original)
       end
     end
     @object_changes.each_value do |change|
@@ -69,8 +69,10 @@ class MemoryTransaction
     nil
   end
 
-  def self.signal_conflict
-    raise 'CommitConflict'
+  def self.signal_conflict_block
+    Proc.new do |conflicting_obj|
+      raise "CommitConflict: #{conflicting_obj} was changed during current transaction."
+    end
   end
 
   @commit_semaphore = Mutex.new
