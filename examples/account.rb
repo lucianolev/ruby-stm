@@ -31,7 +31,7 @@ my_account = BankAccount.new(50)
 another_account = BankAccount.new(0)
 
 transfer = Proc.new do
-my_account.transfer_to(1, another_account)
+  my_account.transfer_to(1, another_account)
 end
 
 threads = []
