@@ -9,7 +9,7 @@ Gems: parser, unparser, rspec.
 Use `bundle install` to install them.
 
 Tested with:
- - MRI 2.1 / 2.2 / 2.3
+ - MRI 2.3+ (may work on 2.1+ but untested)
  - Rubinius 3.69+
 
 ## Usage

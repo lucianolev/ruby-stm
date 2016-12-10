@@ -28,13 +28,10 @@ class Object
   end
 
   def has_same_internal_state?(an_obj)
-    self.instance_variables.each do |ivar_name|
-      if self.instance_variable_get(ivar_name) !=
+    self.instance_variables.all? do |ivar_name|
+      self.instance_variable_get(ivar_name) ==
           an_obj.instance_variable_get(ivar_name)
-        return false
-      end
     end
-    true
   end
 
   def copy_internal_state(an_object)

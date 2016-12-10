@@ -6,10 +6,15 @@ class Class < Module
   end
 
   def subclasses_implementing_method(method_name)
-    ObjectSpace.each_object(singleton_class).select do |klass|
-      klass != self and
-          klass.instance_methods(false).include?(method_name)
+    self.all_subclasses.select do |klass|
+      klass.instance_methods(false).include?(method_name)
     end
+  end
+
+  def all_subclasses
+    metaclass = self.singleton_class
+    subclasses_including_self = ObjectSpace.each_object(metaclass)
+    subclasses_including_self.reject { |klass| klass == self }
   end
 
   private
