@@ -16,20 +16,38 @@ class Hash
   #   from manual code inspection) to solve the problem.
   #
   #   TODO: Check why this isn't working for Hash class.
-  #
+
   # def instance_variables
-  #   [:@entries, :@state, :@default, :@default_proc, :@size, :@capacity, :@mask, :@max_entries, ]
+  #   [:@default, :@default_proc, :@trie, :@state]
   # end
   #
   # class State
   #   def instance_variables
-  #     [:@compare_by_identity, :@head, :@tail]
+  #     [:@size, :@head, :@tail, :@compare_by_identity]
   #   end
   # end
   #
-  # class Bucket
+  # class Item
   #   def instance_variables
-  #     [:@key, :@key_hash, :@value, :@link, :@state, :@previous, :@next]
+  #     [:@key, :@key_hash, :@value, :@previous]
+  #   end
+  # end
+  #
+  # class List
+  #   def instance_variables
+  #     [:@key_hash, :@entries]
+  #   end
+  # end
+  #
+  # class Trie
+  #   def instance_variables
+  #     [:@level, :@bmp, :@entries]
+  #   end
+  # end
+  #
+  # class Iterator
+  #   def instance_variables
+  #     [:@state]
   #   end
   # end
 end
