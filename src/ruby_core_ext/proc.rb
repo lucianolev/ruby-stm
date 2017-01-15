@@ -1,4 +1,5 @@
-# load all ruby_core_ext
+require 'bundler/setup'
+
 if RUBY_ENGINE == 'rbx'
   Dir[File.join(__dir__, 'custom_atomic_methods/rbx', '*.rb')].each { |file| require_relative file }
 end

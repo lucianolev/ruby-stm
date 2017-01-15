@@ -1,8 +1,17 @@
 require_relative '../ruby_core_ext/symbol'
+require_relative 'local_vars_in_scope'
+
+if RUBY_ENGINE == 'rbx'
+  require_relative 'rbx/ast_atomic_rewriter'
+end
 
 class ASTAtomicRewriter < Parser::AST::Processor
   def initialize(a_binding=nil)
-    @source_binding = a_binding
+    @local_vars_in_scope = LocalVarsInScope.new(a_binding)
+
+    if RUBY_ENGINE == 'rbx'
+      @local_vars_in_privately_node = LocalVarsInAST.new
+    end
   end
 
   def on_send(node) # e.g.: obj.a_message
@@ -10,25 +19,11 @@ class ASTAtomicRewriter < Parser::AST::Processor
 
     receiver_node = process(receiver_node) if receiver_node
 
-    # When accessing a local variable defined in outer scope, the parser cannot distinguish it from a message sent
-    # wihout arguments and an explicit receiver. In that case we can desambiguate the situation by looking
-    # if the supposed 'method_name' is not indeed a local variable. So, we do the atomic name transformation unless
-    # it's a local variable.
-    unless is_a_local_variable?(method_name)
-      if RUBY_ENGINE == 'rbx'
-        # Some Rubinius' send nodes are NOT defined as methods. Instead they are transformed using defined AST
-        # transformations found in the kernel which emit a special bytecode instead of a normal message send. We should
-        # not transform this nodes to atomic because if they are transformed, the transformations will not be applied
-        # due to unmatching method name so the interpreter will raise an unhandlable method_missing.
-        unless is_a_rbx_undefined_method_node?(receiver_node,
-                                               method_name)
-          method_name = method_name.to_atomic_method_name
-        end
-      else
-        method_name = method_name.to_atomic_method_name
-      end
+    if should_transform_to_atomic?(node)
+      method_name = method_name.to_atomic_method_name
     end
 
+    # continue processing...
     node.updated(nil, [
         receiver_node, method_name, *process_all(arg_nodes)
     ])
@@ -57,26 +52,40 @@ class ASTAtomicRewriter < Parser::AST::Processor
 
   private
 
-  def is_a_rbx_undefined_method_node?(receiver_node, method_name)
-    # based on the analysis of lib/rubinius/code/ast/transforms.rb in the rubinius-ast-3.8 gem
-    if not receiver_node.nil?
-      primitives = [:primitive, :invoke_primitive, :check_frozen,
-                    :call_custom, :single_block_arg, :asm,
-                    :privately]
-      receiver_node.children[1] == :Rubinius &&
-          primitives.include?(method_name)
-    else
-      [:undefined, :block_given?, :iterator?].include?(method_name)
-    end
-  end
+  def should_transform_to_atomic?(send_node)
+    _, method_name, *_ = *send_node
 
-  def is_a_local_variable?(method_name)
-    begin
-      !@source_binding.nil? and
-          @source_binding.local_variable_defined?(method_name)
-    rescue NameError # some method name are not valid local variable names so local_variable_defined? will raise a NameError
-      false
+    # When accessing a local variable defined in outer scope, the parser cannot distinguish it from a message sent
+    # without arguments and an explicit receiver. We should check if this send node corresponds to a local variable
+    # gathered from current scope (on initialization)
+    if @local_vars_in_scope.include?(method_name)
+      return false
     end
-  end
 
+    if RUBY_ENGINE == 'rbx'
+      # Rubinius implements a special compiler macro called Rubinius.privately which executes code inside a block
+      # in a special way. Variables inside that macro should be treated as if they were defined _outside_ that block.
+      # We should check if this send node corresponds to a local variable gathered from parsing a Rubinius.privately
+      # block node before.
+      if @local_vars_in_privately_node.include?(method_name)
+        return false
+      end
+
+      # Some Rubinius' send nodes are NOT defined as methods. Instead they are transformed using defined AST
+      # transformations found in the kernel which emit a special bytecode instead of a normal message send. We should
+      # not transform this nodes to atomic because if they are transformed, the transformations will not be applied
+      # due to unmatching method method_name so the interpreter will raise an unhandlable method_missing.
+      if is_a_rbx_undefined_method_node?(send_node)
+        return false
+      end
+
+      # Rubinius.asm special macro will execute bytecode passed as a block parameter. We do not want to perform any
+      # transformation when we are inside those special blocks.
+      if currently_inside_rbx_asm_block?
+        return false
+      end
+    end
+
+    true
+  end
 end

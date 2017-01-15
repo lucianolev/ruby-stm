@@ -3,8 +3,8 @@ require_relative '../ruby_core_ext/object'
 class ObjectChange
   def initialize(object)
     @original = object
-    @working = object.clone # shallow copy
-    @previous = @working.clone # shallow copy
+    @working = object.shallow_copy
+    @previous = @working.shallow_copy
   end
 
   def working

@@ -18,21 +18,11 @@ class UnboundMethod
   end
 
   def source_code_available?
-    !is_native? && !is_a_primitive_kernel_method?
+    !is_native?
   end
 
   def is_native?
     source_location.nil?
-  end
-
-  def is_a_primitive_kernel_method?
-    if RUBY_ENGINE == 'rbx'
-      unless source_location.nil?
-        return source_location[0] ==
-            File.join(RbConfig::CONFIG['prefix'], 'core/alpha.rb')
-      end
-    end
-    false
   end
 
   def define_in(a_module, name)

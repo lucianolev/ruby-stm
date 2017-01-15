@@ -1,9 +1,0 @@
-class Hash
-  def has_same_internal_state?(an_obj)
-    self == an_obj
-  end
-
-  def copy_internal_state(an_object)
-    self.replace(an_object)
-  end
-end

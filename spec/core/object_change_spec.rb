@@ -25,19 +25,4 @@ describe ObjectChange do
       expect(@object_change.has_changed?).to eq(true)
     end
   end
-
-  context 'Tests using array' do
-    it 'should correctly detect that an array object didnt change' do
-      @an_array = [1, 2, 3]
-      @object_change = ObjectChange.new(@an_array)
-      @object_change.working[0] = 1
-      expect(@object_change.has_changed?).to eq(false)
-    end
-    it 'should correctly detect that an array object has changed when using the [] operator' do
-      @an_array = [1, 2, 3]
-      @object_change = ObjectChange.new(@an_array)
-      @object_change.working[1] = 7
-      expect(@object_change.has_changed?).to eq(true)
-    end
-  end
 end

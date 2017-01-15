@@ -3,12 +3,7 @@ require_relative 'module'
 require_relative 'class'
 require_relative '../core/memory_transaction'
 
-if RUBY_ENGINE == 'rbx'
-  Dir[File.join(__dir__, 'primitives_internal_state/rbx', '*.rb')].each { |file| require_relative file }
-end
-if RUBY_ENGINE == 'ruby'
-  Dir[File.join(__dir__, 'primitives_internal_state/mri', '*.rb')].each { |file| require_relative file }
-end
+require_relative 'internal_state_primitives/object'
 
 class Object
   def method_missing(method_name, *args, &block)
@@ -16,6 +11,7 @@ class Object
       original_method_name = method_name.to_nonatomic_method_name
       assert_original_method_is_defined(original_method_name)
       class_of_method = class_of_method_def(original_method_name)
+      puts "DEBUG: Defining atomic method #{class_of_method}##{method_name} (obj #{self})"
       class_of_method.define_atomic_method(original_method_name)
       resend_atomic_method(method_name, args, block)
     else
@@ -25,20 +21,6 @@ class Object
 
   def working_copy
     MemoryTransaction.current.change_for(self).working
-  end
-
-  def has_same_internal_state?(an_obj)
-    self.instance_variables.all? do |ivar_name|
-      self.instance_variable_get(ivar_name) ==
-          an_obj.instance_variable_get(ivar_name)
-    end
-  end
-
-  def copy_internal_state(an_object)
-    an_object.instance_variables.each do |inst_var_name|
-      self.instance_variable_set(inst_var_name,
-                                 an_object.instance_variable_get(inst_var_name))
-    end
   end
 
   define_method(:instance_variable_set.to_atomic_method_name) do |var_name, value|
