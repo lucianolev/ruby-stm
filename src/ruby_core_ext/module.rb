@@ -13,7 +13,7 @@ class Module
 
   def define_atomic_method(orig_meth_name)
     atomic_method = instance_method(orig_meth_name).to_atomic
-    define_method(atomic_method.name, atomic_method)
+    atomic_method.define_in(self)
 
     if orig_meth_name.to_atomic_method_name != atomic_method.name
       alias_method(orig_meth_name.to_atomic_method_name,
@@ -31,16 +31,6 @@ class Module
   end
 
   private
-
-  alias_method :__original__define_method, :define_method
-
-  def define_method(name, meth=nil, &prc)
-    if not meth.nil? and !block_given?
-      meth.define_in(self, name)
-    else
-      __original__define_method(name, &prc)
-    end
-  end
 
   def self.register_module_with_an_atomic_method(a_module)
     @@modules_with_atomic_methods.add(a_module)
