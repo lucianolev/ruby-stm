@@ -7,9 +7,6 @@ require_relative '../to_atomic/atomic_unbound_method'
 
 class UnboundMethod
   def source_code
-    unless source_code_available?
-      raise 'Source code is not available for this UnboundMethod.'
-    end
     UnboundMethodSourceCode.new(self)
   end
 
