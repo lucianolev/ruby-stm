@@ -1,3 +1,5 @@
+require 'parser'
+
 class LocalVarsInAST < Parser::AST::Processor
   def initialize
     @local_vars_in_ast = Set.new
