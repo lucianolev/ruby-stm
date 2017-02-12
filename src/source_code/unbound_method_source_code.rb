@@ -62,7 +62,7 @@ class UnboundMethodSourceCode < ObjectSourceCode
     if is_a_method_def_node?(ast_node)
       ast_node
     else
-      ast_node.children.find(ifnone=false) do |child|
+      ast_node.children.find(proc { false }) do |child|
         child.is_a?(Parser::AST::Node) &&
             is_a_method_def_node?(child)
       end
