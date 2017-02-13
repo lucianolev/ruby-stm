@@ -2,6 +2,7 @@ require_relative '../ruby_core_ext/object'
 
 class ObjectChange
   def initialize(object)
+    puts "DEBUG: New ObjectChange for #{object.class}->#{object}"
     @original = object
     @working = object.shallow_copy
     @previous = @working.shallow_copy

@@ -34,7 +34,6 @@ class Object
     original_method_name = method_name.to_nonatomic_method_name
     assert_original_method_is_defined(original_method_name)
     class_of_method = class_of_method_def(original_method_name)
-    puts "DEBUG: Defining atomic method #{class_of_method}##{method_name} (obj #{self})"
     class_of_method.define_atomic_method(original_method_name)
     resend_atomic_method(method_name, args, block)
   end
