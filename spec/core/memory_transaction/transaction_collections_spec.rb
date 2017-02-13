@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../../../src/ruby_core_ext/proc'
+require_relative '../../../src/stm'
 
 describe 'Transactions on collections' do
   before do

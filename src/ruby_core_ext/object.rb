@@ -3,7 +3,7 @@ require_relative 'module'
 require_relative 'class'
 require_relative '../core/memory_transaction'
 
-require_relative 'internal_state_primitives/object'
+require_relative 'internal_state_primitives/all'
 
 class Object
   def method_missing(method_name, *args, &block)
