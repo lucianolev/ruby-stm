@@ -33,18 +33,9 @@ class Object
   def define_and_dispatch_atomic_variant(method_name, args, block)
     original_method_name = method_name.to_nonatomic_method_name
     assert_original_method_is_defined(original_method_name)
-    class_of_method = class_of_method_def(original_method_name)
+    class_of_method = method(original_method_name).owner
     class_of_method.define_atomic_method(original_method_name)
     resend_atomic_method(method_name, args, block)
-  end
-
-  def class_of_method_def(method_name)
-    # Singleton methods are defined in singleton's class of the object instead of object's class.
-    if self.singleton_methods.include?(method_name)
-      self.singleton_class
-    else
-      self.class
-    end
   end
 
   def assert_original_method_is_defined(original_method_name)
@@ -57,7 +48,7 @@ class Object
     if respond_to?(method_name, true)
       __send__(method_name, *args, &block)
     else
-      raise "Fail to define atomic method '#{class_of_method_def(method_name.to_nonatomic_method_name)}##{method_name}'!"
+      raise "Fail to define atomic method '#{method(method_name.to_nonatomic_method_name).owner}##{method_name}'!"
     end
   end
 end
