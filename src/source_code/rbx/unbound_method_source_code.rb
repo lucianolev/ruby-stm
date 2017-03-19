@@ -1,6 +1,6 @@
 require_relative '../../ruby_core_ext/rbx/unbound_method'
 
-class UnboundMethodSourceCode < ObjectSourceCode
+class UnboundMethodSourceCode < CallableSourceCode
 
   # WORKAROUND: Rubinius's source_location method returns nil for attr_* methods.
   # See https://github.com/rubinius/rubinius/issues/3727

@@ -1,16 +1,14 @@
 require 'parser/current'
 require 'unparser'
 
-class ObjectSourceCode
-
+class CallableSourceCode
   def initialize(obj)
     @obj = obj
-    @source_code = parse_source_code
-    @ast = Parser::CurrentRuby.parse(@source_code)
+    @ast = Parser::CurrentRuby.parse(parse_source_code)
   end
 
   def to_s
-    @source_code
+    Unparser.unparse(@ast)
   end
 
   def to_ast
@@ -19,17 +17,16 @@ class ObjectSourceCode
 
   def apply_ast_transformation!(ast_processor)
     @ast = ast_processor.process(to_ast)
-    @source_code = Unparser.unparse(@ast)
   end
 
   def apply_source_rewrite!(source_rewriter)
-    @source_code = source_rewriter.process
-    @ast = Parser::CurrentRuby.parse(@source_code)
+    new_source_code = source_rewriter.process
+    @ast = Parser::CurrentRuby.parse(new_source_code)
   end
 
   def new_source_rewriter
     buffer = Parser::Source::Buffer.new('(method buffer)')
-    buffer.source = @source_code
+    buffer.source = to_s
     Parser::Source::Rewriter.new(buffer)
   end
 
@@ -55,5 +52,4 @@ class ObjectSourceCode
   def find_source_code_node(parsed_node)
     raise NotImplementedError
   end
-
 end

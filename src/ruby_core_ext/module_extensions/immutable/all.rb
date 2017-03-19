@@ -1,0 +1,10 @@
+require_relative 'module'
+
+require_relative 'bignum'
+require_relative 'false_class'
+require_relative 'fixnum'
+require_relative 'float'
+require_relative 'integer'
+require_relative 'nil_class'
+require_relative 'symbol'
+require_relative 'true_class'

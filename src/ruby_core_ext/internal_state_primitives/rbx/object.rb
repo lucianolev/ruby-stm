@@ -1,17 +1,21 @@
 class Object
-
-  # Similar to 'clone', but without calling initialize_copy for subclasses.
-  def shallow_copy
-    copy = start_new_copy
-
-    Rubinius.invoke_primitive :object_copy_object, copy, self
-    Rubinius.invoke_primitive :object_copy_singleton_class, copy, self
-
-    copy.freeze if frozen?
-    copy
+  def has_same_object_state?(an_obj)
+    all_instance_variables.all? do |ivar_name|
+      ivar_self = self.instance_variable_get(ivar_name)
+      ivar_an_obj = an_obj.instance_variable_get(ivar_name)
+      ivar_self.equal?(ivar_an_obj)
+    end
   end
 
-  protected
+  private
+
+  def copy_object_state(an_obj)
+    Rubinius.invoke_primitive :object_copy_object, self, an_obj
+  end
+
+  def copy_singleton_class(an_obj)
+    Rubinius.invoke_primitive :object_copy_singleton_class, self, an_obj
+  end
 
   # In Rubinius, instance variables implemented as C++ fields are hidden from developers.
   # Here we use the Mirror API to get those instance fields and merge them with visible
@@ -21,20 +25,5 @@ class Object
     instance_variables = reflection_api.instance_variables
     all_instance_variables = Set.new(instance_variables)
     all_instance_variables.merge(reflection_api.instance_fields)
-
-    if self.kind_of?(Module)
-      all_instance_variables.subtract([:@method_table,
-                                       :@module_name,
-                                       :@constant_table,
-                                       :@origin])
-    end
-
-    all_instance_variables
-  end
-
-  private
-
-  def start_new_copy
-    Rubinius::Type.object_class(self).allocate
   end
 end

@@ -1,3 +1,5 @@
+require 'pathname'
+
 class UnboundMethod
 
   # PATCH: Rubinius seems to return relative paths for it's core method source location instead of

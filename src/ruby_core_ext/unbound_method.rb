@@ -1,4 +1,3 @@
-require 'pathname'
 if RUBY_ENGINE == 'rbx'
   require_relative 'rbx/unbound_method'
 end
@@ -11,18 +10,6 @@ class UnboundMethod
   end
 
   def to_atomic
-    AtomicUnboundMethod.of(self)
-  end
-
-  def source_code_available?
-    !is_native?
-  end
-
-  def is_native?
-    source_location.nil?
-  end
-
-  def define_in(a_module)
-    a_module.send(:define_method, self.name, self)
+    AtomicUnboundMethod.from(self)
   end
 end

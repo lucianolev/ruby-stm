@@ -23,7 +23,7 @@ self.__atomic__instance_variable_set(:@instance_var, 8)
 another_local = self.__atomic__instance_variable_get(:@instance_var)
 myobj.__atomic__method_call
     CODE
-    expect(AtomicProc.of(a_proc).source_code.to_s).to eq(expected_code.gsub(/\n\z/, ''))
+    expect(AtomicProc.from(a_proc).source_code.to_s).to eq(expected_code.gsub(/\n\z/, ''))
   end
 
 end

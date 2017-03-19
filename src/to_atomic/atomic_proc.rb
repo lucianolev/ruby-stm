@@ -1,41 +1,16 @@
-require_relative 'ast_atomic_rewriter'
+require_relative 'atomic_callable'
 
-class AtomicProc
-
-  def self.of(a_proc)
-    assert_no_arguments(a_proc)
-    new(a_proc)
-  end
-
-  def self.assert_no_arguments(a_proc)
-    if a_proc.arity != 0
-      raise 'Cannot atomize a proc with arguments!'
-    end
-  end
-
-  def initialize(a_proc)
-    @original_proc = a_proc
-    @atomic_proc = Proc.new do
-      a_proc.binding.eval(source_code.to_s,
-                          *@original_proc.source_location)
-    end
-  end
-
-  def source_code
-    source_code = @original_proc.source_code
-    ast_rewriter = ASTAtomicRewriter.new(@original_proc.binding)
-    source_code.apply_ast_transformation!(ast_rewriter)
-    source_code
-  end
-
-  def to_atomic
-    self
-  end
-
+class AtomicProc < AtomicCallable
   private
 
-  def method_missing(symbol, *args)
-    @atomic_proc.send(symbol, *args)
+  def generate_atomic
+    Proc.new do
+      original.binding.eval(source_code.to_s,
+                            *original.source_location)
+    end
   end
 
+  def atomic_send_rewriter
+    AtomicSendRewriter.new(original.binding)
+  end
 end

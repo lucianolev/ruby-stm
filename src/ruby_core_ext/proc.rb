@@ -16,7 +16,11 @@ class Proc
   end
 
   def to_atomic
-    AtomicProc.of(self)
+    has_arguments = self.arity != 0
+    if has_arguments
+      raise 'Cannot atomize a proc with arguments!'
+    end
+    AtomicProc.from(self)
   end
 
   def source_code

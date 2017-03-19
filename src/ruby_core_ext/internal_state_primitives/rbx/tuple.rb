@@ -1,9 +1,15 @@
 module Rubinius
   class Tuple
+    def has_same_object_state?(other_tuple)
+      other_tuple.length.times.all? do |i|
+        self[i].equal?(other_tuple[i])
+      end
+    end
+
     private
 
     def start_new_copy
-      Rubinius::Type.object_class(self).new(self.size)
+      self.class.new(self.size)
     end
   end
 end
