@@ -1,5 +1,3 @@
-require_relative 'module'
-
 if RUBY_ENGINE == 'ruby'
   require_relative 'mri/array'
   require_relative 'mri/hash'

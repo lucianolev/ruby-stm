@@ -1,5 +1,3 @@
-require_relative 'module'
-
 require_relative 'bignum'
 require_relative 'false_class'
 require_relative 'fixnum'

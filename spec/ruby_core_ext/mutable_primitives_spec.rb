@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../../src/ruby_core_ext/module_extensions/mutable_primitives/all'
+require_relative '../../src/ruby_core_ext/class_extensions/mutable_primitives/all'
 
 describe 'Mutable primitives' do
   it 'should mark all instances as mutable primitives when setting mutable_primitive_instances?'

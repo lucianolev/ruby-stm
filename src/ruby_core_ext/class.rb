@@ -1,3 +1,5 @@
+require_relative 'class_extensions/all'
+
 class Class < Module
   def subclasses_implementing_message(message)
     self.all_subclasses.select do |klass|

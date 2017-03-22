@@ -38,12 +38,10 @@ class AtomicUnboundMethod < AtomicCallable
       owner.send(:define_method, name, original)
       # puts "DEBUG: Atomic method defined #{self.owner}##{self.name} (untransformed)"
     elsif should_send_through_working_copy?
-      owner.send(:define_method, name,
-                 original_through_working_copy)
+      owner.send(:define_method, name, original_through_working_copy)
       # puts "DEBUG: Atomic method defined #{self.owner}##{self.name} (through working copy)"
     else
-      owner.send(:define_method_using_source_code, name,
-                 source_code)
+      owner.send(:define_method_using_source_code, name, source_code)
       # puts 'DEBUG: -----------------------------------------'
       # puts "DEBUG: Atomic method defined #{self.owner}##{self.name}."
       # puts "DEBUG: Source code:\n#{self.source_code.to_s}"
@@ -70,19 +68,19 @@ class AtomicUnboundMethod < AtomicCallable
   end
 
   def should_not_transform?
-    owner.immutable_instances? ||
+    owner.is_a?(Class) && owner.immutable_instances? ||
         owner.is_infraestructure_primitive?(original.name)
   end
 
   def should_send_through_working_copy?
-    owner.mutable_primitive_instances? ||
-        owner.is_a_mutable_primitive?(original.name)
+    owner.is_a?(Class) && (owner.mutable_primitive_instances? ||
+        owner.is_a_mutable_primitive?(original.name))
   end
 
   def original_through_working_copy
     ->(*args, &block) do
-      working_copy.send(__method__.to_nonatomic_method_name, *args,
-                        &block)
+      send_through_working_copy(__method__.to_nonatomic_method_name,
+                                *args, &block)
     end
   end
 

@@ -1,4 +1,8 @@
-class Module
+class Class
+  def immutable_instances?
+    false
+  end
+
   def mutable_primitive_instances?
     false
   end

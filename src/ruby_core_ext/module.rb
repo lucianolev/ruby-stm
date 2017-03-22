@@ -1,7 +1,6 @@
 require_relative 'symbol'
 require_relative 'unbound_method'
-
-require_relative 'module_extensions/all'
+require_relative 'infraestructure_primitives/all'
 
 class Module
   @@modules_with_atomic_methods = Set.new # We use a class variable, to be shared also with class Class instance

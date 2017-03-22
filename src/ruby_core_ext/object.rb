@@ -19,6 +19,10 @@ class Object
     MemoryTransaction.current.change_for(self).working
   end
 
+  def send_through_working_copy(message, *args, &block)
+    working_copy.send(message, *args, &block)
+  end
+
   define_method(:instance_variable_set.to_atomic_method_name) do |var_name, value|
     # puts "DEBUG: Var #{var_name.inspect} set to value #{value.inspect} in working copy"
     working_copy.instance_variable_set(var_name, value)
