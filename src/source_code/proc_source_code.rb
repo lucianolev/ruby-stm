@@ -1,7 +1,7 @@
-require_relative 'callable_source_code'
+require_relative 'executable_source_code'
 require_relative 'source_code_reader'
 
-class ProcSourceCode < CallableSourceCode
+class ProcSourceCode < ExecutableSourceCode
 
   private
 

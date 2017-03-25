@@ -1,7 +1,7 @@
 require 'parser/current'
 require 'unparser'
 
-class CallableSourceCode
+class ExecutableSourceCode
   def initialize(obj)
     @obj = obj
     @ast = Parser::CurrentRuby.parse(parse_source_code)

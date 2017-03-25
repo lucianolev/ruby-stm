@@ -1,6 +1,6 @@
-require_relative 'atomic_callable'
+require_relative 'atomic_executable'
 
-class AtomicProc < AtomicCallable
+class AtomicProc < AtomicExecutable
   private
 
   def generate_atomic

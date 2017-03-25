@@ -1,14 +1,14 @@
 require_relative 'atomic_rewriters/atomic_state_access_rewriter'
 require_relative 'atomic_rewriters/atomic_send_rewriter'
 
-class AtomicCallable
-  def self.from(callable)
-    new(callable)
+class AtomicExecutable
+  def self.from(executable)
+    new(executable)
   end
 
-  def initialize(callable)
-    @original_callable = callable
-    @atomic_callable = generate_atomic
+  def initialize(executable)
+    @original_exec = executable
+    @atomic_exec = generate_atomic
   end
 
   def source_code
@@ -27,7 +27,7 @@ class AtomicCallable
   end
 
   def original
-    @original_callable
+    @original_exec
   end
 
   def transform_to_atomic(source_code)
@@ -51,6 +51,6 @@ class AtomicCallable
   end
 
   def method_missing(symbol, *args)
-    @atomic_callable.send(symbol, *args)
+    @atomic_exec.send(symbol, *args)
   end
 end

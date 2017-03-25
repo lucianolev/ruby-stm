@@ -1,4 +1,4 @@
-require_relative 'atomic_callable'
+require_relative 'atomic_executable'
 require_relative 'atomic_rewriters/atomic_send_rewriter'
 
 if RUBY_ENGINE == 'rbx'
@@ -6,7 +6,7 @@ if RUBY_ENGINE == 'rbx'
   require_relative 'atomic_rewriters/rbx/remove_rbx_primitives_rewriter'
 end
 
-class AtomicUnboundMethod < AtomicCallable
+class AtomicUnboundMethod < AtomicExecutable
   def name
     original.name.to_atomic_method_name
   end

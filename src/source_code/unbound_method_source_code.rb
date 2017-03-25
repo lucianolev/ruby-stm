@@ -1,4 +1,4 @@
-require_relative 'callable_source_code'
+require_relative 'executable_source_code'
 require_relative 'source_code_reader'
 require_relative '../ruby_core_ext/symbol'
 
@@ -6,7 +6,7 @@ if RUBY_ENGINE == 'rbx'
   require_relative 'rbx/unbound_method_source_code'
 end
 
-class UnboundMethodSourceCode < CallableSourceCode
+class UnboundMethodSourceCode < ExecutableSourceCode
 
   def initialize(obj)
     super
