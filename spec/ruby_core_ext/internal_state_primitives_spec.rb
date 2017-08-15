@@ -73,18 +73,24 @@ describe 'Internal state primitives (Object extension)' do
   end
 
   context 'Test shallow copy on classes' do
-    it 'shallow copying a class copies its metaclass correctly' do
-      class TestClass
-        @class_ivar = 1
-
-        def self.update_ivar
-          @class_ivar += 1
-        end
+    if RUBY_ENGINE == 'ruby'
+      it 'shallow copying a class copies its metaclass correctly' do
+        skip 'Unfortunately, copying singleton classes is unsupported on MRI.'
       end
+    else
+      it 'shallow copying a class copies its metaclass correctly' do
+        class TestClass
+          @class_ivar = 1
 
-      class_copy = TestClass.shallow_copy
-      expect(TestClass.update_ivar).to eq(2)
-      expect(class_copy.update_ivar).to eq(2)
+          def self.update_ivar
+            @class_ivar += 1
+          end
+        end
+
+        class_copy = TestClass.shallow_copy
+        expect(TestClass.update_ivar).to eq(2)
+        expect(class_copy.update_ivar).to eq(2)
+      end
     end
   end
 
