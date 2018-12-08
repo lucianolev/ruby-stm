@@ -3,6 +3,8 @@
 This is an academic project. It's not optimized in any way to be used in real life, 
 resource demanding escenarios (it should be useful as a base to achieve that goal though).
 
+Paper (Spanish): http://dc.sigedep.exactas.uba.ar/media/academic/grade/thesis/leveroni.pdf
+
 ## Requirements
 
 Gems: parser, unparser, rspec.
